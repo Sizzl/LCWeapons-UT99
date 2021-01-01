@@ -3,10 +3,25 @@ class LCMutator expands XC_LagCompensation;
 
 var Weapon ReplaceThis, ReplaceThisWith;
 var LCSpawnNotify ReplaceSN;
-var bool bApplySNReplace;
-var bool bTeamShock;
-var string LoadedClasses;
+var() bool bApplySNReplace;
+var() bool bTeamShock;
+var() string LoadedClasses;
+var() config bool bUseRifleHeadshotAdjustment;
+var() config bool bDebug;
+var() config float PowerAdjustMiniPri; // Power (frequency) adjustment, lower value = more frequent
+var() config float PowerAdjustMiniSec; 
 
+var() config bool bNoLockdownAll; // All overrides individual values if True (TO-DO - further weapon lockdown removal)
+var() config bool bNoLockdownMini;
+
+// Individual weapon replacement toggles
+var() config bool bReplaceImpactHammer;
+var() config bool bReplaceEnforcer;
+var() config bool bReplaceShockRifle;
+var() config bool bReplaceMinigun;
+var() config bool bReplaceSniperRifle;
+var() config bool bReplaceInsta;
+var() config bool bReplaceSiegePulseRifle;
 
 //Find known custom arenas, replace with LC arenas
 event PreBeginPlay()
@@ -107,14 +122,14 @@ function int LCReplacement( Actor Other)
 		return 1;
 	}
 		
-	if ( W.Class == class'ImpactHammer' )
+	if ( W.Class == class'ImpactHammer' && bReplaceImpactHammer)
 		return DoReplace(W,class'LCImpactHammer');
-	else if ( ClassIsChildOf( W.Class, class'Enforcer') )
+	else if ( ClassIsChildOf( W.Class, class'Enforcer') && bReplaceEnforcer)
 	{
 		if ( W.Class == class'Enforcer' )		return DoReplace(W,class'LCEnforcer');
 		else if ( W.IsA('sgEnforcer') )			return DoReplace(W,class'LCEnforcer',,,true);
 	}
-	else if ( ClassIsChildOf( W.Class, class'ShockRifle') )
+	else if ( ClassIsChildOf( W.Class, class'ShockRifle') && bReplaceShockRifle)
 	{
 		if ( W.Class == class'ShockRifle' )			return DoReplace(W,class'LCShockRifle');
 		if ( W.Class == class'SuperShockRifle' )	return DoReplace(W,class'LCSuperShockRifle',class'LCShockRifleLoader');
@@ -122,7 +137,7 @@ function int LCReplacement( Actor Other)
 		if ( W.IsA('BP_ShockRifle') )				return DoReplace(W,class'LCBP_ShockRifle',class'LCShockRifleLoader');
 		if ( W.IsA('RainbowShockRifle') )			return DoReplace(W,class'LCRainbowShockRifle',class'LCShockRifleLoader');
 	}
-	else if ( W.default.Mesh == LodMesh'Botpack.RiflePick' )	//This is a sniper rifle!
+	else if ( W.default.Mesh == LodMesh'Botpack.RiflePick' && bReplaceSniperRifle )	//This is a sniper rifle!
 	{
 		if ( ClassIsChildOf( W.Class, class'SniperRifle') )
 		{
@@ -142,14 +157,14 @@ function int LCReplacement( Actor Other)
 		else if ( string(W.class) ~= "h4xRiflev3.h4x_Rifle" )	return DoReplace(W,class'LC_v3_h4xRifle',class'LCSniperRifleLoader');
 		else if ( W.IsA('AlienAssaultRifle') )					return DoReplace(W,class'LC_AARV17',class'LCSniperRifleLoader');
 	}
-	else if ( ClassIsChildOf( W.Class, class'minigun2') )
+	else if ( ClassIsChildOf( W.Class, class'minigun2') && bReplaceMinigun)
 	{
 		if ( W.Class == class'minigun2' )			return DoReplace(W,class'LCMinigun2');
 		else if ( W.IsA('Minigun_2x') )				return DoReplace(W,class'LCMinigun2',,,true);
 		else if ( W.IsA('BP_Minigun') )				return DoReplace(W,class'LCBP_Minigun',class'LCClassLoader');
 		else if ( W.IsA('sgMinigun') )				return SiegeMini(W);
 	}
-	else if ( W.default.Mesh == LodMesh'UnrealI.minipick' )	//This is an old minigun!
+	else if ( W.default.Mesh == LodMesh'UnrealI.minipick' && bReplaceMinigun )	//This is an old minigun!
 	{
 		if ( (W.Class == Class'UnrealI.Minigun') || W.IsA('OLMinigun') )
 			return DoReplace( W, class'LCMinigun');
@@ -159,12 +174,12 @@ function int LCReplacement( Actor Other)
 			return DoReplace( W, class'LCLiandriMinigun');
 		}
 	}
-	else if ( W.IsA('AsmdPulseRifle') ) //SiegeXtreme
+	else if ( W.IsA('AsmdPulseRifle') && bReplaceSiegePulseRifle ) //SiegeXtreme
 	{
 		Class'LCAsmdPulseRifle'.default.OrgClass = class<TournamentWeapon>(W.Class);
 		return DoReplace( W, class'LCAsmdPulseRifle');
 	}
-	else if ( W.IsA('SiegeInstagibRifle') ) //SiegeUltimate
+	else if ( W.IsA('SiegeInstagibRifle') && bReplaceInsta ) //SiegeUltimate
 	{
 		Class'LCSiegeInstagibRifle'.default.OrgClass = class<TournamentWeapon>(W.Class);
 		return DoReplace( W, class'LCSiegeInstagibRifle');
@@ -289,7 +304,7 @@ function bool FoundArena( Mutator M)
 			LCArena = Spawn( class'LCArenaMutator');
 			LCArena.SetupWeaponReplace( class'ImpactHammer', class'LCImpactHammer');
 		}
-		else if ( M.IsA('InstaGibDM') )
+		else if ( M.IsA('InstaGibDM') && bReplaceInsta)
 		{
 			LCArena = Spawn( class'LCArenaMutator');
 			LCArena.SetupWeaponReplace( class'SuperShockRifle', class'LCSuperShockRifle');
@@ -405,6 +420,11 @@ function bool ChainMutatorBeforeThis( Mutator M)
 //Mimicking ZP because ppl gets used to stuff
 function Mutate (string MutateString, PlayerPawn Sender)
 {
+	local string item;
+	if (bDebug)
+	{
+		log("LC Caught Mutate: "$MutateString,'LCWeapons');
+	}
 	if ( !bNoBinds && Left(MutateString, 10) ~= "getweapon " )
 	{
 		if ( (MutateString ~= "getweapon zp_SniperRifle") || (MutateString ~= "getweapon zp_sn") )
@@ -421,6 +441,82 @@ function Mutate (string MutateString, PlayerPawn Sender)
 			Class'LCStatics'.static.FindBasedWeapon( Sender, class'LCMinigun2');
 		else if ( (MutateString ~= "getweapon lc_ih") )
 			Class'LCStatics'.static.FindBasedWeapon( Sender, class'LCImpactHammer');
+	}
+	else if ( MutateString ~= "lc" || MutateString ~= "lcweapons" || MutateString ~= "replacements" )
+	{
+		Sender.ClientMessage("LCWeapons replacement mutator. Weapons/variants being replaced:");
+		Sender.ClientMessage("---");
+		Sender.ClientMessage("Impact Hammer:"@string(bReplaceImpactHammer));
+		// Sender.ClientMessage("Enforcer:"@string(bReplaceEnforcer)$", Lockdown enabled:"@(bNoLockdownAll || bNoLockdownEnforcer));
+		Sender.ClientMessage("Enforcer:"@string(bReplaceEnforcer));
+		Sender.ClientMessage("Shock Rifle:"@string(bReplaceShockRifle));
+		Sender.ClientMessage("Minigun:"@string(bReplaceMinigun)$", Lockdown enabled:"@(bNoLockdownAll || bNoLockdownMini));
+		//Sender.ClientMessage("Sniper Rifle:"@string(bReplaceSniperRifle)$", Lockdown enabled:"@(bNoLockdownAll || bNoLockdownSniper));
+		Sender.ClientMessage("Sniper Rifle:"@string(bReplaceSniperRifle));
+		Sender.ClientMessage("Super Shock Rifle (InstaGib):"@string(bReplaceInsta));
+	}
+	else if (Left(MutateString,6) ~= "lc set")
+	{
+		item = Mid(MutateString,7);
+		if (Left(item,8) ~= "mini pri")
+		{
+			Sender.ClientMessage("Altering Minigun primary power adjustment from:"@PowerAdjustMiniPri$", to:"@string(float(Mid(item,9))));
+			PowerAdjustMiniPri = float(Mid(item,9));
+		}
+		else if (Left(item,8) ~= "mini sec")
+		{
+			Sender.ClientMessage("Altering Minigun secondary power adjustment from:"@PowerAdjustMiniSec$", to:"@string(float(Mid(item,9))));
+			PowerAdjustMiniSec = float(Mid(item,9));
+		}
+		SaveConfig();
+	}
+	else if ( Left(MutateString,9) ~= "lc toggle")
+	{
+		if (Sender.bAdmin)
+		{
+			item = Mid(MutateString,10);
+				
+			if (item ~= "ImpactHammer" || item ~= "Hammer")
+			{
+				bReplaceImpactHammer = !bReplaceImpactHammer;
+				Sender.ClientMessage("Impact Hammer replacement, now set to:"@string(bReplaceImpactHammer));
+			}
+			else if (item ~= "Enforcer")
+			{
+				bReplaceEnforcer = !bReplaceEnforcer;
+				Sender.ClientMessage("Enforcer replacement, now set to:"@string(bReplaceEnforcer));
+			}
+			else if (Left(item,5) ~= "Shock")
+			{
+				bReplaceShockRifle = !bReplaceShockRifle;
+				Sender.ClientMessage("Shock Rifle replacement, now set to:"@string(bReplaceShockRifle));
+			}
+			else if (Left(item,4) ~= "Mini")
+			{
+				bReplaceMinigun = !bReplaceMinigun;
+				Sender.ClientMessage("Minigun, now set to:"@string(bReplaceMinigun));
+			}
+			else if (Left(item,6) ~= "Sniper")
+			{
+				bReplaceSniperRifle = !bReplaceSniperRifle;
+				Sender.ClientMessage("Sniper Rifle, now set to:"@string(bReplaceSniperRifle));
+			}
+			else if (Left(item,2) ~= "hs")
+			{
+				bDebug = !bDebug;
+				Sender.ClientMessage("Sniper Rifle headshot height adjustment, now set to:"@string(bUseRifleHeadshotAdjustment));
+			}
+			else if (Left(item,5) ~= "debug")
+			{
+				bDebug = !bDebug;
+				Sender.ClientMessage("Enhanced logging, now set to:"@string(bDebug));
+			}
+			SaveConfig();
+		}
+		else
+		{
+			Sender.ClientMessage("Administrative rights required to make these changes.");
+		}
 	}
 	else if ( MutateString ~= "zp_Off" )
 	{
@@ -453,4 +549,18 @@ final function SetServerPackage( string Pkg)
 defaultproperties
 {
      LoadedClasses=";"
+     bDebug=true
+     bUseRifleHeadshotAdjustment=true
+     PowerAdjustMiniPri=1.00
+     PowerAdjustMiniSec=1.00
+     bReplaceImpactHammer=true
+     bReplaceEnforcer=true
+     bReplaceSiegePulseRifle=true
+     bReplaceShockRifle=true
+     bReplaceMinigun=true
+     bReplaceSniperRifle=true
+     bReplaceInsta=true
+     bNoLockdownAll=true
+     bNoLockdownMini=true
 }
+

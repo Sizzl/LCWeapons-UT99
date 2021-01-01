@@ -5,17 +5,16 @@
 
 class LCSniperRifle expands SniperRifle;
 
-
+var() bool bUseHeadshotAdjustment;
 var XC_CompensatorChannel LCChan;
-var int LCMode;
-
-var float ffRefireTimer; //This will enforce security checks
-var float ffAimError; //If random seed != 0, do AimError serverside
-var float FireAnimRate;
-var int NormalDamage, HeadshotDamage;
+var() int LCMode;
+var() float ffRefireTimer; //This will enforce security checks
+var() float ffAimError; //If random seed != 0, do AimError serverside
+var() float FireAnimRate;
+var() int NormalDamage, HeadshotDamage;
 var Texture Crosshair;
 var Texture FirstPersonSkins[4];
-
+var() bool bDebug;
 
 simulated function ModifyFireRate();
 
@@ -23,6 +22,15 @@ simulated event KillCredit( actor Other)
 {
 	if ( XC_CompensatorChannel(Other) != none )
 		LCChan = XC_CompensatorChannel(Other);
+
+	if ( LCMutator(Other) != none )
+	{
+		bDebug = LCMutator(Other).bDebug;
+		bUseHeadshotAdjustment = LCMutator(Other).bUseRifleHeadshotAdjustment;
+		if (bDebug)
+			log("[LC] Using Headshot Height Adjustment: "$string(bUseHeadshotAdjustment),'LCWeapons');
+	}
+
 }
 
 simulated event RenderOverlays( canvas Canvas )
@@ -96,6 +104,7 @@ simulated function ProcessTraceHit( Actor Other, Vector HitLocation, Vector HitN
 	local UT_Shellcase s;
 	local Actor HitEffect;
 	local bool bSpecialEff;
+	local float HSHeight;
 
 	bSpecialEff = IsLC() && (Level.NetMode != NM_Client); //Spawn for LC clients
 
@@ -119,10 +128,33 @@ simulated function ProcessTraceHit( Actor Other, Vector HitLocation, Vector HitN
 			Other.PlaySound(Sound 'ChunkHit',, 4.0,,100);
 		if ( Level.NetMode != NM_Client )
 		{
-			if ( Other.bIsPawn && CanHeadshot(Instigator) && (HitLocation.Z - Other.Location.Z > HeadshotHeight(Pawn(Other))) )
-				Other.TakeDamage(HeadshotDamage, Pawn(Owner), HitLocation, 35000.0*X, AltDamageType);
+
+			if ( Instigator != None && Other.bIsPawn && CanHeadshot(Instigator))
+			{
+				// Revert factoring of this when logging is not needed
+				HSHeight = HeadshotHeight(Pawn(Other),bUseHeadshotAdjustment);
+				if (bDebug && Instigator.isA('PlayerPawn'))
+					PlayerPawn(Instigator).ClientMessage("[LC] HS Test Height:"@string(HSHeight)$", Adjust: "$string(bUseHeadshotAdjustment));
+
+				if ((HitLocation.Z - Other.Location.Z > HSHeight))
+				{
+					if (bDebug && Instigator.isA('PlayerPawn'))
+						PlayerPawn(Instigator).ClientMessage("[LC] HS Test Result: Headshot!");
+					Other.TakeDamage(HeadshotDamage, Pawn(Owner), HitLocation, 35000.0*X, AltDamageType);
+				}
+				else
+				{
+					if (bDebug && Instigator.isA('PlayerPawn'))
+						PlayerPawn(Instigator).ClientMessage("[LC] HS Test Result: Body-shot!");
+					Other.TakeDamage(NormalDamage, Pawn(Owner), HitLocation, 30000.0*X, MyDamageType);	
+				}
+			}
 			else
+			{
+				if (bDebug && Instigator.isA('PlayerPawn'))
+					PlayerPawn(Instigator).ClientMessage("[LC] HS Test Result: Body-shot!");
 				Other.TakeDamage(NormalDamage, Pawn(Owner), HitLocation, 30000.0*X, MyDamageType);	
+			}
 		}
 		else if ( Other.bIsPawn && class'LCStatics'.static.RelevantHitActor( Other, PlayerPawn(Owner)) && (Pawn(Other).PlayerReplicationInfo == none || Pawn(Other).PlayerReplicationInfo.Team != Pawn(Owner).PlayerReplicationInfo.Team) )
 		{
@@ -151,13 +183,13 @@ static function bool CanHeadshot( Pawn Shooter)
 	return false;
 }
 
-//Screw this shit
-static function float HeadshotHeight( Pawn Other)
+//Screw this shit, but only if we really want to
+static function float HeadshotHeight( Pawn Other, optional bool AdjustHeadshots)
 {
 	local float Result;
 	
 	Result = Other.CollisionHeight * 0.62;
-	if ( Other.BaseEyeHeight < Other.default.BaseEyeHeight )
+	if (!(Other.isA('FortStandard')) && Other.BaseEyeHeight < Other.default.BaseEyeHeight && Other.BaseEyeHeight > 0 && AdjustHeadshots)
 		Result *= fMax( 0.2, Other.BaseEyeHeight / Other.default.BaseEyeHeight);
 	
 	return Result;
@@ -251,4 +283,5 @@ defaultproperties
 	NormalDamage=45
 	HeadshotDamage=100
 	LCMode=1
+	bUseHeadshotAdjustment=true
 }

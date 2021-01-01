@@ -6,21 +6,25 @@ class LCMinigun2 extends minigun2;
 var XC_CompensatorChannel LCChan;
 var int LCMode;
 
-var bool bBulletNow;
-var bool bSpawnTracers;
-var bool bTIW;
-var bool bInstantUnwind;
+var() bool bBulletNow;
+var() bool bSpawnTracers;
+var() bool bTIW;
+var() bool bInstantUnwind;
+var() bool bDebug;
+var() bool bNoLockdown; // Adjusted in Mutator
 
-var float SlowSleep;
-var float FastSleep;
-var float SlowTIW; //Goes to SlowSleep if bTIW
-var float FastTIW; //Goes to FastSleep if bTIW
-var float SlowAccuracy;
-var float FastAccuracy;
-var float TIWCounter;
+var() float SlowSleep; // Uses this if !bTIW
+var() float FastSleep; // Uses this if !bTIW
+var() float SlowTIW; //Copies value to SlowSleep if bTIW
+var() float FastTIW; //Copies value to FastSleep if bTIW
+var() float PowerFactorPri; // Adjusted in Mutator
+var() float PowerFactorSec; // Adjusted in Mutator
+var() float SlowAccuracy;
+var() float FastAccuracy;
+var() float TIWCounter;
 
-var int BaseDamage;
-var int RandomDamage;
+var() int BaseDamage;
+var() int RandomDamage;
 
 var vector LastStartTrace;
 
@@ -33,13 +37,34 @@ replication
 
 
 ////////////////////////////////
-//All of the unlagged code here
+//All of the unlagged code here; applies on each pickup
 simulated event KillCredit( actor Other)
 {
 	if ( XC_CompensatorChannel(Other) != none )
 		LCChan = XC_CompensatorChannel(Other);
-	else if ( LCMutator(Other) != none )
+	if ( LCMutator(Other) != none )
+	{
+		bDebug = LCMutator(Other).bDebug;
 		bTIW = LCMutator(Other).bTIWFire;
+		bNoLockdown = LCMutator(Other).bNoLockdownAll || LCMutator(Other).bNoLockdownMini;
+		PowerFactorPri = LCMutator(Other).PowerAdjustMiniPri;
+		PowerFactorSec = LCMutator(Other).PowerAdjustMiniSec;
+		if (bTIW)
+		{
+			if (bDebug)
+				log("[LC] Adjusting TIW power value by a factor of, Pri:"@PowerFactorPri$", ["$SlowTIW$"->"$string(SlowTIW * PowerFactorPri)$"] Sec:"@PowerFactorSec$", ["$FastTIW$"->"$string(FastTIW * PowerFactorSec)$"]",'LCWeapons');
+			SlowTIW = SlowTIW * PowerFactorPri;
+			FastTIW = FastTIW * PowerFactorSec;
+		}
+		else
+		{
+			if (bDebug)
+				log("[LC] Adjusting non-TIW power value by a factor of, Pri:"@PowerFactorPri$", ["$SlowSleep$"->"$string(SlowSleep * PowerFactorPri)$"] Sec:"@PowerFactorSec$", ["$FastSleep$"->"$string(FastSleep * PowerFactorSec)$"]",'LCWeapons');
+			SlowSleep = SlowSleep * PowerFactorPri;
+			FastSleep = FastSleep * PowerFactorSec;			
+
+		}
+	}
 }
 simulated function PlayPostSelect()
 {
@@ -106,8 +131,8 @@ simulated function ProcessTraceHit( Actor Other, Vector HitLocation, Vector HitN
 		rndDam = BaseDamage + Rand(RandomDamage);
 		if ( FRand() < 0.2 )
 			X *= 2.5;
-		else if ( (Pawn(Other) != None) && Pawn(Other).bIsPlayer )
-			X = vect(0,0,0); //Lockdown prevention on players
+		else if ( (Pawn(Other) != None) && Pawn(Other).bIsPlayer && bNoLockdown)
+			X = vect(0,0,0); //Lockdown prevention on players - CB style
 		Other.TakeDamage( rndDam, Pawn(Owner), HitLocation, rndDam*500.0*X, MyDamageType);
 	}
 	if ( LCChan != None )
@@ -347,4 +372,6 @@ defaultproperties
 	FastAccuracy=0.75
 	BaseDamage=9
 	RandomDamage=6
+	PowerFactorPri=1.0
+	PowerFactorSec=1.0
 }
