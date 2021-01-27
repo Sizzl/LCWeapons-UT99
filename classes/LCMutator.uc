@@ -503,7 +503,7 @@ function Mutate (string MutateString, PlayerPawn Sender)
 			}
 			else if (Left(item,2) ~= "hs")
 			{
-				bDebug = !bDebug;
+				bUseRifleHeadshotAdjustment = !bUseRifleHeadshotAdjustment;
 				Sender.ClientMessage("Sniper Rifle headshot height adjustment, now set to:"@string(bUseRifleHeadshotAdjustment));
 			}
 			else if (Left(item,5) ~= "debug")
