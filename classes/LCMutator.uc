@@ -86,7 +86,7 @@ event PostBeginPlay()
 
 function Class<Weapon> MyDefaultWeapon()
 {
-	if ( Level.Game.DefaultWeapon == class'ImpactHammer' )
+	if ( Level.Game.DefaultWeapon == class'ImpactHammer' && bReplaceImpactHammer )
 		return class'LCImpactHammer';
 	return Level.Game.DefaultWeapon;
 }
