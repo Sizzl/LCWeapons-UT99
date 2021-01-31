@@ -38,6 +38,7 @@ var() config bool bWeaponAnim;
 var() config bool bSimulateAmmo;
 var() config bool bUsePrediction;
 var() config bool bEnableMHhack;
+var() config bool bReplaceRockets;
 var() config bool bTIWFire;
 var() config float MaxPredictNonLC;
 
@@ -407,4 +408,5 @@ defaultproperties
 	bSimulateAmmo=True
 	bUsePrediction=True
 	bEnableMHhack=True
+	bReplaceRockets=true
 }

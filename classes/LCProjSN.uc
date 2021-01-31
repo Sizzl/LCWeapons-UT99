@@ -10,7 +10,7 @@ event Actor SpawnNotification( Actor A)
 	local XC_PosList PosList;
 	
 	// TODO: Delay spawn until AFTER SpawnNotification
-	if ( A.Class == class'RocketMk2' )
+	if ( A.Class == class'RocketMk2' && Mutator.bReplaceRockets)
 		A = ReplaceRocket( RocketMk2(A) );
 
 	if ( !A.bNetTemporary && A.bProjTarget && (A.CollisionHeight > 0) && (A.CollisionRadius > 0) )

@@ -48,6 +48,7 @@ event PreBeginPlay()
 		else
 			old = M;
 	}
+	Level.Game.RegisterMessageMutator(self);
 }
 
 function AddMutator(Mutator M)
@@ -227,11 +228,12 @@ function int DoReplace
 )
 {
 	local Weapon W;
+	local bool bAllowItemRotation, bForceItemRotation;
 
 	if ( LoaderClass != None )
 		SetupLoader( Other.Class, NewWeapClass, LoaderClass);
 	
-	W = Other.Spawn(NewWeapClass, Other.Owner, Other.Tag);
+	W = Other.Spawn(NewWeapClass, Other.Owner, Other.Tag, Other.Location);
 	if ( W != none )
 	{
 		W.SetCollisionSize( Other.CollisionRadius, Other.CollisionHeight);
@@ -249,7 +251,16 @@ function int DoReplace
 			W.AmmoName = Other.AmmoName;
 		if ( bFullAmmo )
 			W.PickupAmmoCount = W.AmmoName.default.MaxAmmo;
-		W.bRotatingPickup = Other.bRotatingPickup;
+		if ( (!Other.bRotatingPickup || Other.RotationRate == rot(0,0,0))
+				&& (Other.Rotation.Pitch != 0 || Other.Rotation.Roll != 0) )
+			bAllowItemRotation = False;
+		else
+			bAllowItemRotation = (Other.RotationRate != rot(0,0,0) && Other.bRotatingPickup) || !Other.default.bRotatingPickup || Other.default.RotationRate == rot(0,0,0);
+		bForceItemRotation = Other.RotationRate != rot(0,0,0) && Other.bRotatingPickup && (!Other.default.bRotatingPickup || Other.default.RotationRate == rot(0,0,0));
+ 
+		W.bRotatingPickup = bAllowItemRotation && (W.bRotatingPickup || bForceItemRotation);;
+		W.bFixedRotationDir=Other.bFixedRotationDir;
+		W.SetPhysics(Other.Physics);
 		SetReplace( Other, W);
 		return int(bApplySNReplace) * 2;
 	}
@@ -421,10 +432,6 @@ function bool ChainMutatorBeforeThis( Mutator M)
 function Mutate (string MutateString, PlayerPawn Sender)
 {
 	local string item;
-	if (bDebug)
-	{
-		log("LC Caught Mutate: "$MutateString,'LCWeapons');
-	}
 	if ( !bNoBinds && Left(MutateString, 10) ~= "getweapon " )
 	{
 		if ( (MutateString ~= "getweapon zp_SniperRifle") || (MutateString ~= "getweapon zp_sn") )
@@ -454,6 +461,7 @@ function Mutate (string MutateString, PlayerPawn Sender)
 		//Sender.ClientMessage("Sniper Rifle:"@string(bReplaceSniperRifle)$", Lockdown enabled:"@(bNoLockdownAll || bNoLockdownSniper));
 		Sender.ClientMessage("Sniper Rifle:"@string(bReplaceSniperRifle));
 		Sender.ClientMessage("Super Shock Rifle (InstaGib):"@string(bReplaceInsta));
+		Sender.ClientMessage("Rocket Projectiles:"@string(bReplaceRockets));
 	}
 	else if (Left(MutateString,6) ~= "lc set")
 	{
@@ -501,6 +509,11 @@ function Mutate (string MutateString, PlayerPawn Sender)
 				bReplaceSniperRifle = !bReplaceSniperRifle;
 				Sender.ClientMessage("Sniper Rifle, now set to:"@string(bReplaceSniperRifle));
 			}
+			else if (Left(item,6) ~= "rocket")
+			{
+				bReplaceRockets = !bReplaceRockets;
+				Sender.ClientMessage("Rocket replacement, now set to:"@string(bReplaceRockets));
+			}
 			else if (Left(item,2) ~= "hs")
 			{
 				bUseRifleHeadshotAdjustment = !bUseRifleHeadshotAdjustment;
@@ -535,6 +548,46 @@ function Mutate (string MutateString, PlayerPawn Sender)
 	Super.Mutate(MutateString,Sender);
 }
 
+function bool MutatorBroadcastLocalizedMessage(Actor Sender, Pawn Receiver, out class<LocalMessage> Message, out optional int Switch, out optional PlayerReplicationInfo RelatedPRI_1, out optional PlayerReplicationInfo RelatedPRI_2, out optional Object OptionalObject)
+{
+	// Let other message handlers know the default Item name of replaced weapons, helps with old HUD replacement and chat mutators
+    if (OptionalObject!=None && Class<Weapon>(OptionalObject)!=None)
+    {
+    	switch (Caps(Class<Weapon>(OptionalObject).default.ItemName))
+    	{
+    		case "SNIPER RIFLE":
+    			OptionalObject = class'Botpack.SniperRifle';
+    			break;
+    		case "SHOCK RIFLE":
+    			OptionalObject = class'Botpack.ShockRifle';
+    			break;
+    		case "MINIGUN":
+    			OptionalObject = class'Botpack.minigun2';
+    			break;
+    		case "PULSE GUN":
+    			OptionalObject = class'Botpack.pulsegun';
+    			break;
+    		case "PULSE GUN":
+    			OptionalObject = class'Botpack.pulsegun';
+    			break;
+    		case "IMPACT HAMMER":
+    			OptionalObject = class'Botpack.ImpactHammer';
+    			break;
+    		case "ENFORCER":
+    			OptionalObject = class'Botpack.Enforcer';
+    			break;
+    		case "ENHANCED SHOCK RIFLE":
+    			OptionalObject = class'Botpack.SuperShockRifle';
+    			break;
+    		default:
+
+    	}
+    }
+    return Super.MutatorBroadcastLocalizedMessage( Sender, Receiver, Message, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject );
+}  
+
+
+
 //******************************************
 //****************** DYNAMIC PACKAGE LOADING
 //*** Platform friendly function, change this code for Unreal 227
@@ -549,7 +602,7 @@ final function SetServerPackage( string Pkg)
 defaultproperties
 {
      LoadedClasses=";"
-     bDebug=true
+     bDebug=false
      bUseRifleHeadshotAdjustment=true
      PowerAdjustMiniPri=1.00
      PowerAdjustMiniSec=1.00
