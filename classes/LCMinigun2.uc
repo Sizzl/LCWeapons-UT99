@@ -9,7 +9,6 @@ var int LCMode;
 var() bool bBulletNow;
 var() bool bSpawnTracers;
 var() bool bTIW;
-var() bool bInstantUnwind;
 var() bool bDebug;
 var() bool bNoLockdown; // Adjusted in Mutator
 
@@ -129,7 +128,9 @@ simulated function ProcessTraceHit( Actor Other, Vector HitLocation, Vector HitN
 			Pawn(Other).WarnTarget( Pawn(Owner), 500, X);
 
 		rndDam = BaseDamage + Rand(RandomDamage);
-		if ( FRand() < 0.2 )
+		if ( NoMomentum() ) //v469 lockdown switch
+			X = vect(0,0,0);
+		else if ( FRand() < 0.2 )
 			X *= 2.5;
 		else if ( (Pawn(Other) != None) && Pawn(Other).bIsPlayer && bNoLockdown)
 			X = vect(0,0,0); //Lockdown prevention on players - CB style
@@ -190,7 +191,6 @@ simulated event RenderOverlays( Canvas Canvas )
 	}
 }
 
-
 simulated function SimGenerateBullet()
 {
 	if ( !IsLC() )
@@ -200,9 +200,6 @@ simulated function SimGenerateBullet()
 	if ( LCChan.bSimAmmo && (AmmoType != none && AmmoType.AmmoAmount > 0) )
 		AmmoType.AmmoAmount--;
 }
-
-
-
 
 state NormalFire
 {
@@ -321,7 +318,12 @@ FastShoot:
 	Goto('FastShoot');
 }
 
-
+simulated function bool NoMomentum()
+{
+	if ( Level.Game != None )
+		return Level.Game.GetPropertyText("NoLockdown") == "1";
+	return false;
+}
 
 //***********************************************************************
 // LCWeapons common interfaces
