@@ -1,0 +1,52 @@
+name: UnrealScript Build
+
+on:
+  push:
+    branches: [ uta ]
+  pull_request:
+    branches: [ uta ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        repository: 'Sizzl/UT99-Server-Linux'
+        token: ${{secrets.UT99_CI_PAT}}
+        path: 'ut'
+    - uses: actions/checkout@v2
+      with:
+        repository: 'Sizzl/LeagueAS140'
+        path: 'ut/ut-server/LeagueAS140'
+    - uses: actions/checkout@v2
+      with:
+        path: 'ut/ut-server/LCWeapons_0025uta'
+    - name: ucc make
+      run: |
+        sed '/EditPackages=Core/ a EditPackages=GlobalFunctions_LC' ./ut/ut-server/System/Default.ini >./ut/ut-server/System/UnrealTournament.tmp
+        sed '/EditPackages=UTBrowser/ a EditPackages=LeagueAS140\nEditPackages=ECM\nEditPackages=SiegeUtil_A\nEditPackages=TimerUtil\nEditPackages=UTPureRC7H\nEditPackages=LCWeapons_0025uta' ./ut/ut-server/System/UnrealTournament.tmp >./ut/ut-server/System/UnrealTournament.ini
+        chmod +x ./ut/ut-server/System/ucc-bin
+        if [[ -d ./ut/ut-server/LCWeapons_0025uta/classes ]]
+        then
+          mv ./ut/ut-server/LCWeapons_0025uta/classes ./ut/ut-server/LCWeapons_0025uta/Classes
+        fi
+        cp -f ./ut/ut-server/LCWeapons_0025uta/*.u ./ut/ut-server/System/
+        cp -f ./ut/ut-server/LCWeapons_0025uta/System/*.u ./ut/ut-server/System/
+        cp -f ./ut/ut-server/LCWeapons_0025uta/System/*.int ./ut/ut-server/System/
+        cp -f ./ut/ut-server/LCWeapons_0025uta/Textures/*.utx ./ut/ut-server/Textures/
+        ./ut/ut-server/System/ucc-bin batchexport Botpack.u CLASS UC ./ut/ut-server/Botpack/Classes/ -nohomedir >/dev/null
+        ./ut/ut-server/System/ucc-bin batchexport UTMenu.u CLASS UC ./ut/ut-server/UTMenu/Classes/ -nohomedir >/dev/null
+        ./ut/ut-server/System/ucc-bin batchexport GlobalFunctions_LC.u CLASS UC ./ut/ut-server/GlobalFunctions_LC/Classes/ -nohomedir >/dev/null
+        ./ut/ut-server/System/ucc-bin batchexport ECM.u CLASS UC ./ut/ut-server/ECM/Classes/ -nohomedir >/dev/null
+        ./ut/ut-server/System/ucc-bin batchexport UTPureRC7H.u CLASS UC ./ut/ut-server/UTPureRC7H/Classes/ -nohomedir >/dev/null
+        cd ./ut/ut-server/System/
+        ./ucc-bin make -nohomedir
+    - name: upload artifacts
+      uses: actions/upload-artifact@v2.2.2
+      with:
+        name: LCWeapons_0025uta
+        path: ./ut/ut-server/System/LCWeapons*.*
+        retention-days: 3
