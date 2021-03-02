@@ -4,7 +4,7 @@ class LCAdvancedShockRifle expands LCShockRifle;
 
 defaultproperties
 {
-      ExplosionClass=Class'LCWeapons_0025uta.LCSunExplo'
+      ExplosionClass=Class'LCWeapons_0025test.LCSunExplo'
       hitdamage=100
       PickupAmmoCount=40
 }

@@ -165,5 +165,5 @@ defaultproperties
       BaseDamage=9
       RandomDamage=6
       LastStartTrace=(X=0.000000,Y=0.000000,Z=0.000000)
-      AltProjectileClass=Class'LCWeapons_0025uta.LCPulseGunStarterBolt'
+      AltProjectileClass=Class'LCWeapons_0025test.LCPulseGunStarterBolt'
 }

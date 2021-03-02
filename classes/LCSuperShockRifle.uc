@@ -18,7 +18,7 @@ defaultproperties
       FireAnimRate=0.400000
       AltFireAnimRate=0.400000
       BeamPrototype=Class'Botpack.supershockbeam'
-      ExplosionClass=Class'LCWeapons_0025uta.LCSuperRing2'
+      ExplosionClass=Class'LCWeapons_0025test.LCSuperRing2'
       hitdamage=1000
       InstFog=(X=800.000000,Z=0.000000)
       AmmoName=Class'Botpack.SuperShockCore'

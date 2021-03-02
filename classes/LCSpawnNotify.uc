@@ -26,6 +26,6 @@ event Actor SpawnNotification( actor A)
 defaultproperties
 {
       Mutator=None
-      ActorClass=Class'LCWeapons_0025uta.LCDummyWeapon'
+      ActorClass=Class'LCWeapons_0025test.LCDummyWeapon'
       RemoteRole=ROLE_None
 }

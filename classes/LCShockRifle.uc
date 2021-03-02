@@ -328,5 +328,5 @@ defaultproperties
       FireAnimRate=0.600000
       AltFireAnimRate=0.800000
       BeamPrototype=None
-      ExplosionClass=Class'LCWeapons_0025uta.FV_RingExplosion5'
+      ExplosionClass=Class'LCWeapons_0025test.FV_RingExplosion5'
 }

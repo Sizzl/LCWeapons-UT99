@@ -623,7 +623,7 @@ defaultproperties
       bGraphicsInitialized=False
       bTeamColor=False
       OrgClass=None
-      ExplosionClass=Class'LCWeapons_0025uta.FV_RingExplosion5'
+      ExplosionClass=Class'LCWeapons_0025test.FV_RingExplosion5'
       LCChan=None
       LCMode=0
       ClientSleepAgain=0.000000

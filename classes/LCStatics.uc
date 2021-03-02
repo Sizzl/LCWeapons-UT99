@@ -6,8 +6,8 @@ class LCStatics expands Object
 	abstract;
 
 #exec OBJ LOAD FILE="GlobalFunctions_LC.u" PACKAGE=GlobalFunctions_LC
-#exec OBJ LOAD FILE="SiegeUtil_A.u" PACKAGE=LCWeapons_0025uta
-#exec OBJ LOAD FILE="TimerUtil.u" PACKAGE=LCWeapons_0025uta
+#exec OBJ LOAD FILE="SiegeUtil_A.u" PACKAGE=LCWeapons_0025test
+#exec OBJ LOAD FILE="TimerUtil.u" PACKAGE=LCWeapons_0025test
 
 const MULTIPLIER = 0x015a4e35;
 const INCREMENT = 1;
