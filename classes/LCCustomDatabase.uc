@@ -9,3 +9,7 @@ class LCCustomDatabase expands Object;
 //
 //************************************************************************
 //static final function bool
+
+defaultproperties
+{
+}

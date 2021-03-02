@@ -19,3 +19,8 @@ simulated event PostNetBeginPlay()
 		return;
 	}
 }
+
+defaultproperties
+{
+      bIsLC=False
+}

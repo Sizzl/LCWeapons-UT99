@@ -131,32 +131,24 @@ Begin:
 
 defaultproperties
 {
-     bSpawnTracers=False
-     FireOffset=(Y=-5.000000,Z=-4.000000)
-     AIRating=0.700000
-     RefireRate=0.900000
-     AltRefireRate=0.930000
-     SelectSound=Sound'UnrealI.Minigun.MiniSelect'
-     Misc1Sound=Sound'UnrealI.Minigun.WindD2'
-     PlayerViewOffset=(X=5.600000,Y=-1.500000,Z=-1.800000)
-     PlayerViewMesh=LodMesh'UnrealI.minigunM'
-     PickupViewMesh=LodMesh'UnrealI.minipick'
-     ThirdPersonMesh=LodMesh'UnrealI.SMini3'
-     PickupSound=Sound'UnrealShare.Pickups.WeaponPickup'
-     Mesh=LodMesh'UnrealI.minipick'
-     CollisionRadius=28.000000
-     CollisionHeight=8.000000
-     LightBrightness=250
-     AltFireSound=Sound'UnrealI.Minigun.AltF1'
-     FireSound=Sound'UnrealI.Minigun.RegF1'
-     Misc1Sound=Sound'UnrealI.Minigun.WindD2'
-     AmmoName=Class'UnrealShare.ShellBox'
-     InventoryGroup=10
-
-     SlowSleep=0.13
-     FastSleep=0.07
- 	 SlowTIW=0.15
-	 FastTIW=0.087
-     SlowAccuracy=0.1
-     FastAccuracy=0.8
+      bSpawnTracers=False
+      FastSleep=0.070000
+      FastTIW=0.087000
+      SlowAccuracy=0.100000
+      FastAccuracy=0.800000
+      AmmoName=Class'UnrealShare.ShellBox'
+      AIRating=0.700000
+      RefireRate=0.900000
+      AltRefireRate=0.930000
+      FireSound=Sound'UnrealI.Minigun.RegF1'
+      AltFireSound=Sound'UnrealI.Minigun.AltF1'
+      Misc1Sound=Sound'UnrealI.Minigun.WindD2'
+      InventoryGroup=10
+      PlayerViewOffset=(X=5.600000,Y=-1.500000,Z=-1.800000)
+      PlayerViewMesh=LodMesh'UnrealI.minigunM'
+      PickupViewMesh=LodMesh'UnrealI.minipick'
+      ThirdPersonMesh=LodMesh'UnrealI.SMini3'
+      Mesh=LodMesh'UnrealI.minipick'
+      CollisionRadius=28.000000
+      LightBrightness=250
 }

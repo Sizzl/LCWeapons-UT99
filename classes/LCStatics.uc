@@ -6,8 +6,8 @@ class LCStatics expands Object
 	abstract;
 
 #exec OBJ LOAD FILE="GlobalFunctions_LC.u" PACKAGE=GlobalFunctions_LC
-#exec OBJ LOAD FILE="SiegeUtil_A.u" PACKAGE=LCWeapons_0025
-#exec OBJ LOAD FILE="TimerUtil.u" PACKAGE=LCWeapons_0025
+#exec OBJ LOAD FILE="SiegeUtil_A.u" PACKAGE=LCWeapons_0025uta
+#exec OBJ LOAD FILE="TimerUtil.u" PACKAGE=LCWeapons_0025uta
 
 const MULTIPLIER = 0x015a4e35;
 const INCREMENT = 1;
@@ -51,7 +51,7 @@ static final function bool DetectXCGE( Actor Other)
 static final function rotator PlayerRot( Pawn P)
 {
 	if ( P.IsA('bbPlayer') && (P.Level.NetMode == NM_Client) )
-		return P.GR();
+		return bbPlayer(P).GR();
 	return P.ViewRotation;
 }
 
@@ -75,6 +75,7 @@ static final function ClientTraceFire( Weapon Weapon, XC_CompensatorChannel LCCh
 	local rotator View;
 	local int CompressedView;
 	local float Accuracy;
+	local float Range;
 	local int ExtraFlags, Seed;
 
 	Shooter = PlayerPawn( Weapon.Owner);
@@ -85,9 +86,73 @@ static final function ClientTraceFire( Weapon Weapon, XC_CompensatorChannel LCCh
 	CompressedView = CompressRotator(View);
 	GetAxes( View, X, Y, Z);
 
-	StartTrace = Weapon.GetStartTrace( ExtraFlags, X, Y, Z);
-	EndTrace = StartTrace + X * Weapon.GetRange(ExtraFlags);
-	Accuracy = Weapon.GetAimError();
+	// StartTrace = Weapon.GetStartTrace( ExtraFlags, X, Y, Z);
+	// Range = Weapon.GetRange(ExtraFlags)
+	// Accuracy = Weapon.GetAimError();
+
+	if (Weapon.isA('LC_AARV17'))
+	{
+		StartTrace = LC_AARV17(Weapon).GetStartTrace( ExtraFlags, X, Y, Z);
+		Range = LC_AARV17(Weapon).GetRange(ExtraFlags);
+		Accuracy = LC_AARV17(Weapon).GetAimError();
+	}
+	else if (Weapon.isA('LCAsmdPulseRifle'))
+	{
+		StartTrace = LCAsmdPulseRifle(Weapon).GetStartTrace( ExtraFlags, X, Y, Z);
+		Range = LCAsmdPulseRifle(Weapon).GetRange(ExtraFlags);
+		Accuracy = LCAsmdPulseRifle(Weapon).GetAimError();
+	}
+	else if (Weapon.isA('LCChamRifle'))
+	{
+		StartTrace = LCChamRifle(Weapon).GetStartTrace( ExtraFlags, X, Y, Z);
+		Range = LCChamRifle(Weapon).GetRange(ExtraFlags);
+		Accuracy = LCChamRifle(Weapon).GetAimError();
+	}
+	else if (Weapon.isA('LCEnforcer'))
+	{
+		StartTrace = LCEnforcer(Weapon).GetStartTrace( ExtraFlags, X, Y, Z);
+		Range = LCEnforcer(Weapon).GetRange(ExtraFlags);
+		Accuracy = LCEnforcer(Weapon).GetAimError();
+	}
+	else if (Weapon.isA('LCImpactHammer'))
+	{
+		StartTrace = LCImpactHammer(Weapon).GetStartTrace( ExtraFlags, X, Y, Z);
+		Range = LCImpactHammer(Weapon).GetRange(ExtraFlags);
+		Accuracy = LCImpactHammer(Weapon).GetAimError();
+	}
+	else if (Weapon.isA('LCMH2Rifle'))
+	{
+		StartTrace = LCMH2Rifle(Weapon).GetStartTrace( ExtraFlags, X, Y, Z);
+		Range = LCMH2Rifle(Weapon).GetRange(ExtraFlags);
+		Accuracy = LCMH2Rifle(Weapon).GetAimError();
+	}
+	else if (Weapon.isA('LCMinigun2'))
+	{
+		StartTrace = LCMinigun2(Weapon).GetStartTrace( ExtraFlags, X, Y, Z);
+		Range = LCMinigun2(Weapon).GetRange(ExtraFlags);
+		Accuracy = LCMinigun2(Weapon).GetAimError();
+	}
+	else if (Weapon.isA('LCShockRifle'))
+	{
+		StartTrace = LCShockRifle(Weapon).GetStartTrace( ExtraFlags, X, Y, Z);
+		Range = LCShockRifle(Weapon).GetRange(ExtraFlags);
+		Accuracy = LCShockRifle(Weapon).GetAimError();
+	}
+	else if (Weapon.isA('LCSiegeInstaGibRifle'))
+	{
+		StartTrace = LCSiegeInstaGibRifle(Weapon).GetStartTrace( ExtraFlags, X, Y, Z);
+		Range = LCSiegeInstaGibRifle(Weapon).GetRange(ExtraFlags);
+		Accuracy = LCSiegeInstaGibRifle(Weapon).GetAimError();
+	}
+	else // if (Weapon.isA('LCSniperRifle'))
+	{
+		StartTrace = LCSniperRifle(Weapon).GetStartTrace( ExtraFlags, X, Y, Z);
+		Range = LCSniperRifle(Weapon).GetRange(ExtraFlags);
+		Accuracy = LCSniperRifle(Weapon).GetAimError();
+	}
+
+	EndTrace = StartTrace + X * Range;
+	
 	if ( Accuracy > 0 )
 	{
 		Seed = Rand( 65536);
@@ -818,7 +883,7 @@ static final function vector CylinderEntrance( vector TStart, vector TDir, float
 			return TStart - vect(0,0,1) * CHeight; //Bottom of cylinder
 		return TStart + vect(0,0,1) * CHeight; //Top of cylinder
 	}
-	//Rotates 90บ to right
+	//Rotates 90ยบ to right
 	Y.Z = Y.X;
 	Y.X = Y.Y;
 	Y.Y = -Y.Z;
@@ -936,12 +1001,15 @@ static final function SetSwitchPriority( Pawn Other, Weapon Weap, name CustomNam
 	}		
 }
 
-
 defaultproperties
 {
-	RoleText(0)="ROLE_None"
-	RoleText(1)="ROLE_DumbProxy"
-	RoleText(2)="ROLE_SimulatedProxy"
-	RoleText(3)="ROLE_AutonomousProxy"
-	RoleText(4)="ROLE_Authority"
+      XCGE_Version=0
+      bXCGE=False
+      bXCGE_LevelHook=False
+      bXCGE_NotRelevantToOwner=False
+      RoleText(0)="ROLE_None"
+      RoleText(1)="ROLE_DumbProxy"
+      RoleText(2)="ROLE_SimulatedProxy"
+      RoleText(3)="ROLE_AutonomousProxy"
+      RoleText(4)="ROLE_Authority"
 }

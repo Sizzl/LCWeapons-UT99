@@ -89,3 +89,13 @@ simulated function InitProperties( Weapon W)
 		SR.Crosshair = SR.default.Crosshair;
 	}
 }
+
+defaultproperties
+{
+      ExtraSkins(0)=None
+      ExtraSkins(1)=None
+      ExtraSkins(2)=None
+      ExtraSkins(3)=None
+      ExtraSkins(4)=None
+      ExtraSkins(5)=None
+}

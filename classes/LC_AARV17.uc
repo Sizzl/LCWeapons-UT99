@@ -266,11 +266,16 @@ state Zooming
 
 defaultproperties
 {
-    ffRefireTimer=0.133
-	FireAnimRate=5
-    DeathMessage="%k put a alienbullet through %o's brain."
-    ItemName="Alien Sniper Rifle"
-    PickupMessage="You picked up a AlienAssaultRifle."
-    PickupAmmoCount=999
-    HeadshotDamage=100000
+      bGraphicsInitialized=False
+      bZoom=False
+      Scope=None
+      Lines=None
+      BloodClass=None
+      ffRefireTimer=0.133000
+      FireAnimRate=5.000000
+      HeadshotDamage=100000
+      PickupAmmoCount=999
+      DeathMessage="%k put a alienbullet through %o's brain."
+      PickupMessage="You picked up a AlienAssaultRifle."
+      ItemName="Alien Sniper Rifle"
 }

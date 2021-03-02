@@ -165,10 +165,10 @@ simulated function InitProperties( Weapon W)
 	W.NameColor       = W.default.NameColor;
 }
 
-
-
-
 defaultproperties
 {
-	bNetTemporary=True
+      BaseWeaponClass=None
+      LCWeaponClass=None
+      BaseWeaponClassString=""
+      bNetTemporary=True
 }

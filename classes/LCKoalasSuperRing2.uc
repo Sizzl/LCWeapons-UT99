@@ -28,5 +28,6 @@ simulated function PostNetBeginPlay()
 
 defaultproperties
 {
-	bOwnerNoSee=True
+      LocalPlayer=None
+      bOwnerNoSee=True
 }

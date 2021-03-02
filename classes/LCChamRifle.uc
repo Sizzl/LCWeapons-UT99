@@ -206,13 +206,13 @@ simulated function ProcessTraceHit(Actor Other, Vector HitLocation, Vector HitNo
 	}
 }
 
-
 defaultproperties
 {
-    ffAimError=16
-	FireAnimRate=0.6
-    DeathMessage="%k FuckedUp %o with the sexy Rifle."
-    ItemName=ChamRifle
-    PickupMessage="You picked up the Rifle!"
-    PickupAmmoCount=600
+      bZoom=False
+      ffAimError=16.000000
+      FireAnimRate=0.600000
+      PickupAmmoCount=600
+      DeathMessage="%k FuckedUp %o with the sexy Rifle."
+      PickupMessage="You picked up the Rifle!"
+      ItemName="ChamRifle"
 }

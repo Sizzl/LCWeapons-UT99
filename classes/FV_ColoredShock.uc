@@ -33,3 +33,7 @@ event Timer()
 	}
 	Destroy();
 }
+
+defaultproperties
+{
+}

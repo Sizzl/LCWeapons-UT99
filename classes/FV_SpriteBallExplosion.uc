@@ -65,3 +65,8 @@ function MakeSound()
 	PlayOwnedSound( EffectSound1,,12.0,,2200);
 	SetOwner( None);
 }
+
+defaultproperties
+{
+      bIsLC=False
+}

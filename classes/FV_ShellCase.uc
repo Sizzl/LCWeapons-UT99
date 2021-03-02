@@ -19,3 +19,8 @@ simulated event PostNetBeginPlay()
 		SetPhysics( PHYS_None);
 	}
 }
+
+defaultproperties
+{
+      bIsLC=False
+}

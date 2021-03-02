@@ -273,15 +273,20 @@ simulated function bool HandleLCFire( bool bFire, bool bAltFire)
 	return true; //Do not let LCChan handle alt-fire
 }
 
-
-
-
 defaultproperties
 {
-	ffRefireTimer=0.65
-	FireAnimRate=1.0
-	NormalDamage=45
-	HeadshotDamage=100
-	LCMode=1
-	bUseHeadshotAdjustment=true
+      bUseHeadshotAdjustment=True
+      LCChan=None
+      LCMode=1
+      ffRefireTimer=0.650000
+      ffAimError=0.000000
+      FireAnimRate=1.000000
+      NormalDamage=45
+      HeadshotDamage=100
+      Crosshair=None
+      FirstPersonSkins(0)=None
+      FirstPersonSkins(1)=None
+      FirstPersonSkins(2)=None
+      FirstPersonSkins(3)=None
+      bDebug=False
 }

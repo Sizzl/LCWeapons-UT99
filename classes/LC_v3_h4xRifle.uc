@@ -83,13 +83,14 @@ state Zooming
 
 defaultproperties
 {
-    ffAimError=6.4
-	FireAnimRate=0.6
-    DeathMessage="%k fucked %o up"
-    ItemName="h4x Sniper Rifle"
-    PickupMessage="You Picked Up A h4x Sniper Rifle."
-    PickupAmmoCount=500
-	ffRefireTimer=0.778
-	SelectSound=None
-	HeadshotDamage=100000
+      bZoom=False
+      ffRefireTimer=0.778000
+      ffAimError=6.400000
+      FireAnimRate=0.600000
+      HeadshotDamage=100000
+      PickupAmmoCount=500
+      SelectSound=None
+      DeathMessage="%k fucked %o up"
+      PickupMessage="You Picked Up A h4x Sniper Rifle."
+      ItemName="h4x Sniper Rifle"
 }

@@ -95,11 +95,26 @@ simulated function LoadExplosion( int i, string ProtoClass)
 		RainbowExplosions[i] = class<ShockWave>( DynamicLoadObject(ProtoClass,class'Class'));
 }
 
-
 defaultproperties
 {
-	FireAnimRate=1
-	AltFireAnimRate=3
-	bAltInstantHit=True
-	AltProjectileClass=None
+      BeamColor=0
+      RainbowPrototypes(0)=None
+      RainbowPrototypes(1)=None
+      RainbowPrototypes(2)=None
+      RainbowPrototypes(3)=None
+      RainbowPrototypes(4)=None
+      RainbowPrototypes(5)=None
+      RainbowPrototypes(6)=None
+      RainbowExplosions(0)=None
+      RainbowExplosions(1)=None
+      RainbowExplosions(2)=None
+      RainbowExplosions(3)=None
+      RainbowExplosions(4)=None
+      RainbowExplosions(5)=None
+      RainbowExplosions(6)=None
+      TmpEffect=None
+      FireAnimRate=1.000000
+      AltFireAnimRate=3.000000
+      bAltInstantHit=True
+      AltProjectileClass=None
 }

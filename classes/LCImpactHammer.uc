@@ -346,3 +346,11 @@ simulated function bool HandleLCFire( bool bFire, bool bAltFire)
 	return true; //Don't let LCChan hitscan fire
 }
 
+defaultproperties
+{
+      LCChan=None
+      LCMode=0
+      bFireRelease=False
+      BufferedDir=(Pitch=0,Yaw=0,Roll=0)
+      ShootFlags=0
+}

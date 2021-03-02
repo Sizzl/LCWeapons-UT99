@@ -15,6 +15,6 @@ simulated function Timer()
 
 defaultproperties
 {
-	Texture=Texture'Botpack.GE1_A00'
-	Mesh=LodMesh'Botpack.PBolt'
+      Texture=Texture'Botpack.GoopEx.ge1_a00'
+      Mesh=LodMesh'Botpack.PBolt'
 }

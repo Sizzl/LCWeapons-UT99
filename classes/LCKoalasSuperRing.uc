@@ -7,13 +7,12 @@ simulated function SpawnExtraEffects()
 	Spawn(class'SuperShockExplo').RemoteRole = ROLE_None;
 }
 
-
 defaultproperties
 {
-bParticles=True
-LODBias=1000
-DrawScale=4.000000
-Texture=Texture'Botpack.MUZZYPULSE'
-ScaleGlow=3.0
-Style=STY_Translucent
+      LODBias=1000.000000
+      Style=STY_Translucent
+      Texture=Texture'Botpack.Skins.MuzzyPulse'
+      DrawScale=4.000000
+      ScaleGlow=3.000000
+      bParticles=True
 }

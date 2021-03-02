@@ -272,8 +272,59 @@ function bool ProcessHit( out ShotData Data)
 		//Override start position if we're finding a new target
 		ExtraFlags = Data.ShootFlags;
 		GetAxes( Pawn(Owner).ViewRotation, X, Y, Z);
-		Data.StartTrace = Data.Weap.GetStartTrace( ExtraFlags, X, Y, Z);
-		Range = Data.Weap.GetRange(ExtraFlags);
+
+		if (Data.Weap.isA('LC_AARV17'))
+		{
+			Data.StartTrace = LC_AARV17(Data.Weap).GetStartTrace( ExtraFlags, X, Y, Z);
+			Range = LC_AARV17(Data.Weap).GetRange(ExtraFlags);
+		}
+		else if (Data.Weap.isA('LCAsmdPulseRifle'))
+		{
+			Data.StartTrace = LCAsmdPulseRifle(Data.Weap).GetStartTrace( ExtraFlags, X, Y, Z);
+			Range = LCAsmdPulseRifle(Data.Weap).GetRange(ExtraFlags);
+		}
+		else if (Data.Weap.isA('LCChamRifle'))
+		{
+			Data.StartTrace = LCChamRifle(Data.Weap).GetStartTrace( ExtraFlags, X, Y, Z);
+			Range = LCChamRifle(Data.Weap).GetRange(ExtraFlags);
+		}
+		else if (Data.Weap.isA('LCEnforcer'))
+		{
+			Data.StartTrace = LCEnforcer(Data.Weap).GetStartTrace( ExtraFlags, X, Y, Z);
+			Range = LCEnforcer(Data.Weap).GetRange(ExtraFlags);
+		}
+		else if (Data.Weap.isA('LCImpactHammer'))
+		{
+			Data.StartTrace = LCImpactHammer(Data.Weap).GetStartTrace( ExtraFlags, X, Y, Z);
+			Range = LCImpactHammer(Data.Weap).GetRange(ExtraFlags);
+		}
+		else if (Data.Weap.isA('LCMH2Rifle'))
+		{
+			Data.StartTrace = LCMH2Rifle(Data.Weap).GetStartTrace( ExtraFlags, X, Y, Z);
+			Range = LCMH2Rifle(Data.Weap).GetRange(ExtraFlags);
+		}
+		else if (Data.Weap.isA('LCMinigun2'))
+		{
+			Data.StartTrace = LCMinigun2(Data.Weap).GetStartTrace( ExtraFlags, X, Y, Z);
+			Range = LCMinigun2(Data.Weap).GetRange(ExtraFlags);
+		}
+		else if (Data.Weap.isA('LCShockRifle'))
+		{
+			Data.StartTrace = LCShockRifle(Data.Weap).GetStartTrace( ExtraFlags, X, Y, Z);
+			Range = LCShockRifle(Data.Weap).GetRange(ExtraFlags);
+		}
+		else if (Data.Weap.isA('LCSiegeInstaGibRifle'))
+		{
+			Data.StartTrace = LCSiegeInstaGibRifle(Data.Weap).GetStartTrace( ExtraFlags, X, Y, Z);
+			Range = LCSiegeInstaGibRifle(Data.Weap).GetRange(ExtraFlags);
+		}
+		else // if (Data.Weap.isA('LCSniperRifle'))
+		{
+			Data.StartTrace = LCSniperRifle(Data.Weap).GetStartTrace( ExtraFlags, X, Y, Z);
+			Range = LCSniperRifle(Data.Weap).GetRange(ExtraFlags);
+		}
+
+
 		EndTrace = Data.StartTrace + X * Range;
 		if ( Data.ffAccuracy != 0 )
 			EndTrace += class'LCStatics'.static.StaticAimError( Y, Z, Data.ffAccuracy, Data.ShootFlags >>> 16);
@@ -514,16 +565,26 @@ simulated function ClientWeaponFire()
 {
 	local int LCMode;
 
-	if ( (bDelayedFire || bDelayedAltFire) && class'LCStatics'.static.IsLCWeapon(CurWeapon,LCMode)
-	  && !CurWeapon.HandleLCFire( bDelayedFire, bDelayedAltFire) )
+	if ( (bDelayedFire || bDelayedAltFire) && class'LCStatics'.static.IsLCWeapon(CurWeapon,LCMode) )
 	{
-		//LC
-		if ( LCMode == 0 )
+		if (
+			(CurWeapon.isA('LCAsmdPulseRifle') && !LCAsmdPulseRifle(CurWeapon).HandleLCFire( bDelayedFire, bDelayedAltFire)) ||
+			(CurWeapon.isA('LCEnforcer') && !LCEnforcer(CurWeapon).HandleLCFire( bDelayedFire, bDelayedAltFire)) ||
+			(CurWeapon.isA('LCImpactHammer') && !LCImpactHammer(CurWeapon).HandleLCFire( bDelayedFire, bDelayedAltFire)) ||
+			(CurWeapon.isA('LCMinigun2') && !LCMinigun2(CurWeapon).HandleLCFire( bDelayedFire, bDelayedAltFire)) ||
+			(CurWeapon.isA('LCShockRifle') && !LCShockRifle(CurWeapon).HandleLCFire( bDelayedFire, bDelayedAltFire)) ||
+			(CurWeapon.isA('LCSiegeInstaGibRifle') && !LCSiegeInstaGibRifle(CurWeapon).HandleLCFire( bDelayedFire, bDelayedAltFire)) ||
+			(CurWeapon.isA('LCSniperRifle') && !LCSniperRifle(CurWeapon).HandleLCFire( bDelayedFire, bDelayedAltFire))
+		)
 		{
+			//LC
+			if ( LCMode == 0 )
+			{
+			}
+			//ZP
+			else if ( LCMode == 1 )
+				class'LCStatics'.static.ClientTraceFire( CurWeapon, self);
 		}
-		//ZP
-		else if ( LCMode == 1 )
-			class'LCStatics'.static.ClientTraceFire( CurWeapon, self);
 	}
 	bDelayedFire = false;
 	bDelayedAltFire = false;
@@ -851,18 +912,58 @@ simulated function LockSWJumpPads( class<Teleporter> PadClass)
 
 function RejectShot( coerce string Reason)
 {
-	Log( "LC Shot rejected: "$Reason,'LagCompensator');
+	local string Initiator;
 	if ( PlayerPawn(Owner) != none )
+	{
+		Initiator = "for"@PlayerPawn(Owner).PlayerReplicationInfo.PlayerName;
 		PlayerPawn(Owner).ClientMessage( "[LC]"@Reason);
+	}
+	Log("LC Shot rejected"$Initiator$": "$Reason,'LagCompensator');
 }
 
 defaultproperties
 {
-    bGameRelevant=True
-    bHidden=True
-    NetPriority=1.1
-    NetUpdateFrequency=20
-    RemoteRole=ROLE_SimulatedProxy
-    bUseLC=True
-	ClientPredictCap=-1
+      LCActor=None
+      LCComp=None
+      LCAdv=None
+      LocalPlayer=None
+      ffRefireTimer=0.000000
+      cAdv=0.000000
+      pwChain=0.000000
+      ProjAdv=0.000000
+      CounterHiFi=0.000000
+      CurWeapon=None
+      CurPendingWeapon=None
+      PendingWeaponAnimAdjust=0.000000
+      PendingWeaponCountdown=0.000000
+      OldFireOffsetY=0.000000
+      OldPosition=(X=0.000000,Y=0.000000,Z=0.000000)
+      OldView=(Pitch=0,Yaw=0,Roll=0)
+      OldTimeStamp=0.000000
+      CurrentSWJumpPad=0
+      ClientPredictCap=-1
+      bClientPendingWeapon=False
+      bUseLC=True
+      bSimAmmo=False
+      bDelayedFire=False
+      bDelayedAltFire=False
+      bLogTick=False
+      bJustSwitched=False
+      bHitProcDone=False
+      bSWChecked=False
+      bNoBinds=False
+      ClientSettings=None
+      SavedShots(0)=(ffOther=None,weap=None,CmpRot=0,ShootFlags=0,ffTime=0.000000,ffHit=(X=0.000000,Y=0.000000,Z=0.000000),ffOff=(X=0.000000,Y=0.000000,Z=0.000000),StartTrace=(X=0.000000,Y=0.000000,Z=0.000000),ffAccuracy=0.000000,Imprecise=0,bPlayerValidated=False,bAccuracyValidated=False,bRangeValidated=False,bBoxValidated=False,bRegisteredFire=False,MaxTimeStamp=0.000000,Error="")
+      SavedShots(1)=(ffOther=None,weap=None,CmpRot=0,ShootFlags=0,ffTime=0.000000,ffHit=(X=0.000000,Y=0.000000,Z=0.000000),ffOff=(X=0.000000,Y=0.000000,Z=0.000000),StartTrace=(X=0.000000,Y=0.000000,Z=0.000000),ffAccuracy=0.000000,Imprecise=0,bPlayerValidated=False,bAccuracyValidated=False,bRangeValidated=False,bBoxValidated=False,bRegisteredFire=False,MaxTimeStamp=0.000000,Error="")
+      SavedShots(2)=(ffOther=None,weap=None,CmpRot=0,ShootFlags=0,ffTime=0.000000,ffHit=(X=0.000000,Y=0.000000,Z=0.000000),ffOff=(X=0.000000,Y=0.000000,Z=0.000000),StartTrace=(X=0.000000,Y=0.000000,Z=0.000000),ffAccuracy=0.000000,Imprecise=0,bPlayerValidated=False,bAccuracyValidated=False,bRangeValidated=False,bBoxValidated=False,bRegisteredFire=False,MaxTimeStamp=0.000000,Error="")
+      SavedShots(3)=(ffOther=None,weap=None,CmpRot=0,ShootFlags=0,ffTime=0.000000,ffHit=(X=0.000000,Y=0.000000,Z=0.000000),ffOff=(X=0.000000,Y=0.000000,Z=0.000000),StartTrace=(X=0.000000,Y=0.000000,Z=0.000000),ffAccuracy=0.000000,Imprecise=0,bPlayerValidated=False,bAccuracyValidated=False,bRangeValidated=False,bBoxValidated=False,bRegisteredFire=False,MaxTimeStamp=0.000000,Error="")
+      SavedShots(4)=(ffOther=None,weap=None,CmpRot=0,ShootFlags=0,ffTime=0.000000,ffHit=(X=0.000000,Y=0.000000,Z=0.000000),ffOff=(X=0.000000,Y=0.000000,Z=0.000000),StartTrace=(X=0.000000,Y=0.000000,Z=0.000000),ffAccuracy=0.000000,Imprecise=0,bPlayerValidated=False,bAccuracyValidated=False,bRangeValidated=False,bBoxValidated=False,bRegisteredFire=False,MaxTimeStamp=0.000000,Error="")
+      SavedShots(5)=(ffOther=None,weap=None,CmpRot=0,ShootFlags=0,ffTime=0.000000,ffHit=(X=0.000000,Y=0.000000,Z=0.000000),ffOff=(X=0.000000,Y=0.000000,Z=0.000000),StartTrace=(X=0.000000,Y=0.000000,Z=0.000000),ffAccuracy=0.000000,Imprecise=0,bPlayerValidated=False,bAccuracyValidated=False,bRangeValidated=False,bBoxValidated=False,bRegisteredFire=False,MaxTimeStamp=0.000000,Error="")
+      SavedShots(6)=(ffOther=None,weap=None,CmpRot=0,ShootFlags=0,ffTime=0.000000,ffHit=(X=0.000000,Y=0.000000,Z=0.000000),ffOff=(X=0.000000,Y=0.000000,Z=0.000000),StartTrace=(X=0.000000,Y=0.000000,Z=0.000000),ffAccuracy=0.000000,Imprecise=0,bPlayerValidated=False,bAccuracyValidated=False,bRangeValidated=False,bBoxValidated=False,bRegisteredFire=False,MaxTimeStamp=0.000000,Error="")
+      SavedShots(7)=(ffOther=None,weap=None,CmpRot=0,ShootFlags=0,ffTime=0.000000,ffHit=(X=0.000000,Y=0.000000,Z=0.000000),ffOff=(X=0.000000,Y=0.000000,Z=0.000000),StartTrace=(X=0.000000,Y=0.000000,Z=0.000000),ffAccuracy=0.000000,Imprecise=0,bPlayerValidated=False,bAccuracyValidated=False,bRangeValidated=False,bBoxValidated=False,bRegisteredFire=False,MaxTimeStamp=0.000000,Error="")
+      ffISaved=0
+      RemoteRole=ROLE_SimulatedProxy
+      bGameRelevant=True
+      NetPriority=1.100000
+      NetUpdateFrequency=20.000000
 }

@@ -11,9 +11,9 @@ event Actor SpawnNotification( actor A)
 	return A;
 }
 
-
 defaultproperties
 {
-	ActorClass=class'ScriptedPawn'
-	RemoteRole=ROLE_None
+      Mutator=None
+      ActorClass=Class'UnrealShare.ScriptedPawn'
+      RemoteRole=ROLE_None
 }

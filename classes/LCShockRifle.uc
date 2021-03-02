@@ -314,15 +314,19 @@ simulated function bool HandleLCFire( bool bFire, bool bAltFire)
 	return true; //Don't let LCChan hitscan fire
 }
 
-
-
 defaultproperties
 {
-	ffRefireTimer=0.734
-	FireAnimRate=0.6
-	AltFireAnimRate=0.8
-	ExplosionClass=class'FV_RingExplosion5'
-	bCombo=True
-	bInstantFlash=True
-	LCMode=1
+      LCChan=None
+      LCMode=1
+      bLoaderSetup=False
+      bNoAmmoDeplete=False
+      bTeamColor=False
+      bLolRifle=False
+      bCombo=True
+      bInstantFlash=True
+      ffRefireTimer=0.734000
+      FireAnimRate=0.600000
+      AltFireAnimRate=0.800000
+      BeamPrototype=None
+      ExplosionClass=Class'LCWeapons_0025uta.FV_RingExplosion5'
 }

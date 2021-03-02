@@ -19,3 +19,8 @@ simulated event PostNetBeginPlay()
 		Disable('Tick');
 	}
 }
+
+defaultproperties
+{
+      bIsLC=False
+}

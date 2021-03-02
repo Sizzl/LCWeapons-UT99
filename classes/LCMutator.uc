@@ -8,20 +8,26 @@ var() bool bTeamShock;
 var() string LoadedClasses;
 var() config bool bUseRifleHeadshotAdjustment;
 var() config bool bDebug;
-var() config float PowerAdjustMiniPri; // Power (frequency) adjustment, lower value = more frequent
-var() config float PowerAdjustMiniSec; 
+var() config float PowerAdjustMiniPri;
+var() config float PowerAdjustMiniSec;
+var() config float PowerAdjustPulseGunPri;
+var() config float PowerAdjustPulseGunSec;
 
-var() config bool bNoLockdownAll; // All overrides individual values if True (TO-DO - further weapon lockdown removal)
+var() config bool bNoLockdownAll; // All overrides individual values if True
 var() config bool bNoLockdownMini;
+var() config bool bNoLockdownPulseGun;
+//var() config bool bNoLockdownEnforcer;
+//var() config bool bNoLockdownSniper;
 
-// Individual weapon replacement toggles
 var() config bool bReplaceImpactHammer;
 var() config bool bReplaceEnforcer;
+var() config bool bReplacePulseGun;
 var() config bool bReplaceShockRifle;
 var() config bool bReplaceMinigun;
 var() config bool bReplaceSniperRifle;
 var() config bool bReplaceInsta;
 var() config bool bReplaceSiegePulseRifle;
+
 
 //Find known custom arenas, replace with LC arenas
 event PreBeginPlay()
@@ -48,6 +54,7 @@ event PreBeginPlay()
 		else
 			old = M;
 	}
+	log("Started PBP",'LCWeapons');
 	Level.Game.RegisterMessageMutator(self);
 }
 
@@ -129,6 +136,10 @@ function int LCReplacement( Actor Other)
 	{
 		if ( W.Class == class'Enforcer' )		return DoReplace(W,class'LCEnforcer');
 		else if ( W.IsA('sgEnforcer') )			return DoReplace(W,class'LCEnforcer',,,true);
+	}
+	else if ( ClassIsChildOf( W.Class, class'PulseGun') && bReplacePulseGun)
+	{
+		return DoReplace(W,class'LCPulseGun');
 	}
 	else if ( ClassIsChildOf( W.Class, class'ShockRifle') && bReplaceShockRifle)
 	{
@@ -251,6 +262,7 @@ function int DoReplace
 			W.AmmoName = Other.AmmoName;
 		if ( bFullAmmo )
 			W.PickupAmmoCount = W.AmmoName.default.MaxAmmo;
+
 		if ( (!Other.bRotatingPickup || Other.RotationRate == rot(0,0,0))
 				&& (Other.Rotation.Pitch != 0 || Other.Rotation.Roll != 0) )
 			bAllowItemRotation = False;
@@ -432,6 +444,10 @@ function bool ChainMutatorBeforeThis( Mutator M)
 function Mutate (string MutateString, PlayerPawn Sender)
 {
 	local string item;
+	if (bDebug)
+	{
+		log("LC Caught Mutate: "$MutateString,'LCWeapons');
+	}
 	if ( !bNoBinds && Left(MutateString, 10) ~= "getweapon " )
 	{
 		if ( (MutateString ~= "getweapon zp_SniperRifle") || (MutateString ~= "getweapon zp_sn") )
@@ -446,6 +462,8 @@ function Mutate (string MutateString, PlayerPawn Sender)
 			Class'LCStatics'.static.FindBasedWeapon( Sender, class'LCSiegeInstagibRifle');
 		else if ( (MutateString ~= "getweapon lc_m") )
 			Class'LCStatics'.static.FindBasedWeapon( Sender, class'LCMinigun2');
+		else if ( (MutateString ~= "getweapon lc_pg") )
+			Class'LCStatics'.static.FindBasedWeapon( Sender, class'LCPulseGun');
 		else if ( (MutateString ~= "getweapon lc_ih") )
 			Class'LCStatics'.static.FindBasedWeapon( Sender, class'LCImpactHammer');
 	}
@@ -456,12 +474,12 @@ function Mutate (string MutateString, PlayerPawn Sender)
 		Sender.ClientMessage("Impact Hammer:"@string(bReplaceImpactHammer));
 		// Sender.ClientMessage("Enforcer:"@string(bReplaceEnforcer)$", Lockdown enabled:"@(bNoLockdownAll || bNoLockdownEnforcer));
 		Sender.ClientMessage("Enforcer:"@string(bReplaceEnforcer));
+		Sender.ClientMessage("Pulse Gun:"@string(bReplacePulseGun)$", Lockdown enabled:"@(bNoLockdownAll || bNoLockdownPulseGun));
 		Sender.ClientMessage("Shock Rifle:"@string(bReplaceShockRifle));
 		Sender.ClientMessage("Minigun:"@string(bReplaceMinigun)$", Lockdown enabled:"@(bNoLockdownAll || bNoLockdownMini));
 		//Sender.ClientMessage("Sniper Rifle:"@string(bReplaceSniperRifle)$", Lockdown enabled:"@(bNoLockdownAll || bNoLockdownSniper));
 		Sender.ClientMessage("Sniper Rifle:"@string(bReplaceSniperRifle));
 		Sender.ClientMessage("Super Shock Rifle (InstaGib):"@string(bReplaceInsta));
-		Sender.ClientMessage("Rocket Projectiles:"@string(bReplaceRockets));
 	}
 	else if (Left(MutateString,6) ~= "lc set")
 	{
@@ -494,6 +512,11 @@ function Mutate (string MutateString, PlayerPawn Sender)
 				bReplaceEnforcer = !bReplaceEnforcer;
 				Sender.ClientMessage("Enforcer replacement, now set to:"@string(bReplaceEnforcer));
 			}
+			else if (item ~= "Pulse" || item ~= "PulseGun")
+			{
+				bReplacePulseGun = !bReplacePulseGun;
+				Sender.ClientMessage("Pulse Gun replacement, now set to:"@string(bReplacePulseGun));
+			}
 			else if (Left(item,5) ~= "Shock")
 			{
 				bReplaceShockRifle = !bReplaceShockRifle;
@@ -502,12 +525,12 @@ function Mutate (string MutateString, PlayerPawn Sender)
 			else if (Left(item,4) ~= "Mini")
 			{
 				bReplaceMinigun = !bReplaceMinigun;
-				Sender.ClientMessage("Minigun, now set to:"@string(bReplaceMinigun));
+				Sender.ClientMessage("Minigun replacement, now set to:"@string(bReplaceMinigun));
 			}
 			else if (Left(item,6) ~= "Sniper")
 			{
 				bReplaceSniperRifle = !bReplaceSniperRifle;
-				Sender.ClientMessage("Sniper Rifle, now set to:"@string(bReplaceSniperRifle));
+				Sender.ClientMessage("Sniper Rifle replacement, now set to:"@string(bReplaceSniperRifle));
 			}
 			else if (Left(item,6) ~= "rocket")
 			{
@@ -550,7 +573,8 @@ function Mutate (string MutateString, PlayerPawn Sender)
 
 function bool MutatorBroadcastLocalizedMessage(Actor Sender, Pawn Receiver, out class<LocalMessage> Message, out optional int Switch, out optional PlayerReplicationInfo RelatedPRI_1, out optional PlayerReplicationInfo RelatedPRI_2, out optional Object OptionalObject)
 {
-	// Let other message handlers know the default Item name of replaced weapons, helps with old HUD replacement and chat mutators
+
+	// Let other mutators know the default Item name of replaced weapons, helps with old HUD replacement and chat mutators
     if (OptionalObject!=None && Class<Weapon>(OptionalObject)!=None)
     {
     	switch (Caps(Class<Weapon>(OptionalObject).default.ItemName))
@@ -587,7 +611,6 @@ function bool MutatorBroadcastLocalizedMessage(Actor Sender, Pawn Receiver, out 
 }  
 
 
-
 //******************************************
 //****************** DYNAMIC PACKAGE LOADING
 //*** Platform friendly function, change this code for Unreal 227
@@ -598,22 +621,29 @@ final function SetServerPackage( string Pkg)
 		AddToPackageMap( Pkg);
 }
 
-
 defaultproperties
 {
-     LoadedClasses=";"
-     bDebug=false
-     bUseRifleHeadshotAdjustment=true
-     PowerAdjustMiniPri=1.00
-     PowerAdjustMiniSec=1.00
-     bReplaceImpactHammer=true
-     bReplaceEnforcer=true
-     bReplaceSiegePulseRifle=true
-     bReplaceShockRifle=true
-     bReplaceMinigun=true
-     bReplaceSniperRifle=true
-     bReplaceInsta=true
-     bNoLockdownAll=true
-     bNoLockdownMini=true
+      ReplaceThis=None
+      ReplaceThisWith=None
+      ReplaceSN=None
+      bApplySNReplace=False
+      bTeamShock=False
+      LoadedClasses=";"
+      bUseRifleHeadshotAdjustment=True
+      bDebug=True
+      PowerAdjustMiniPri=1.000000
+      PowerAdjustMiniSec=1.000000
+      PowerAdjustPulseGunPri=0.000000
+      PowerAdjustPulseGunSec=0.000000
+      bNoLockdownAll=True
+      bNoLockdownMini=True
+      bNoLockdownPulseGun=True
+      bReplaceImpactHammer=True
+      bReplaceEnforcer=True
+      bReplacePulseGun=False
+      bReplaceShockRifle=True
+      bReplaceMinigun=True
+      bReplaceSniperRifle=True
+      bReplaceInsta=True
+      bReplaceSiegePulseRifle=True
 }
-

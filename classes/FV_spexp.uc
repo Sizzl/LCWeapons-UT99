@@ -5,9 +5,8 @@ simulated Function Timer()
 {
 }
 
-
 defaultproperties
 {
-     DrawScale=0.150000
-     LightRadius=4
+      DrawScale=0.150000
+      LightRadius=4
 }

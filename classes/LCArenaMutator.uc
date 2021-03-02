@@ -203,3 +203,41 @@ function AddPropertyWeapon( string NewWP, string NewWV)
 	wProp[iWp] = NewWP;
 	wValue[iWp++] = NewWV;
 }
+
+defaultproperties
+{
+      LCMutator=None
+      OldWeapClass=None
+      MainWeapClass=None
+      OldAmmoClass=None
+      MainAmmoClass=None
+      bReplaceAllWeapons=False
+      bReplaceAllAmmo=False
+      bGiveWeaponOnSpawn=False
+      bKillEnforcers=False
+      bRemoveHealth=False
+      bRemovePickups=False
+      bRemoveBoots=False
+      bRemoveMelee=False
+      bMaxAmmoOnWeap=False
+      bMaxAmmoOnAmmo=False
+      CustomXLocClass=None
+      bForceCustomXLoc=False
+      wProp(0)=""
+      wProp(1)=""
+      wProp(2)=""
+      wProp(3)=""
+      wProp(4)=""
+      wProp(5)=""
+      wProp(6)=""
+      wProp(7)=""
+      wValue(0)=""
+      wValue(1)=""
+      wValue(2)=""
+      wValue(3)=""
+      wValue(4)=""
+      wValue(5)=""
+      wValue(6)=""
+      wValue(7)=""
+      iWp=0
+}

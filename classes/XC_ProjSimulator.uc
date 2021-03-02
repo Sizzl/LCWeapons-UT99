@@ -116,5 +116,13 @@ event Destroyed()
 
 defaultproperties
 {
-    Damage=-1
+      Notify=None
+      NextSimulator=None
+      SpawnedAt=(X=0.000000,Y=0.000000,Z=0.000000)
+      InitialVelocity=(X=0.000000,Y=0.000000,Z=0.000000)
+      ExpectedProj=None
+      ssPredict=0.000000
+      ssCounter=0.000000
+      CurScore=0.000000
+      Damage=-1.000000
 }

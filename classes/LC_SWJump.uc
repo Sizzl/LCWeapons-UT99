@@ -37,5 +37,6 @@ event PostTouch(Actor other)
 
 defaultproperties
 {
-	bCollideActors=True
+      MyPad=None
+      LocalPlayer=None
 }

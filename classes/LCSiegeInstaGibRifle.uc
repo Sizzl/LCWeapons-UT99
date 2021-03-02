@@ -315,47 +315,51 @@ simulated function float GetAimError()
 {
 	return 0;
 }
-final function bool HandleLCFire( bool bFire, bool bAltFire)
+simulated function bool HandleLCFire( bool bFire, bool bAltFire)
 {
 	return false; //LCChan has full control
 }
 
 defaultproperties
 {
-     ffRefireTimer=1.1
-     hitdamage=300
-     WeaponDescription="Classification: Energy Rifle"
-     InstFlash=-0.400000
-     InstFog=(X=800.000000)
-     PickupAmmoCount=50
-     bInstantHit=True
-     bAltWarnTarget=True
-     bSplashDamage=True
-     FiringSpeed=2.000000
-     FireOffset=(X=10.000000,Y=-5.000000,Z=-8.000000)
-     MyDamageType=jolted
-     aimerror=650.000000
-     AIRating=0.630000
-     AltRefireRate=0.700000
-     AltFireSound=Sound'UnrealShare.ASMD.TazerAltFire'
-     SelectSound=Sound'UnrealShare.ASMD.TazerSelect'
-     DeathMessage="%k electrified %o with the %w."
-     NameColor=(R=128,G=0)
-     AutoSwitchPriority=4
-     InventoryGroup=4
-     PickupMessage="You got the Siege Enhanced Shock Rifle."
-     ItemName="Siege Enhanced Shock Rifle"
-     PlayerViewOffset=(X=4.400000,Y=-1.700000,Z=-1.600000)
-     PlayerViewMesh=LodMesh'Botpack.sshockm'
-     PlayerViewScale=2.000000
-     BobDamping=0.975000
-     PickupViewMesh=LodMesh'Botpack.ASMD2pick'
-     ThirdPersonMesh=LodMesh'Botpack.SASMD2hand'
-     PickupSound=Sound'UnrealShare.Pickups.WeaponPickup'
-     Mesh=LodMesh'Botpack.ASMD2pick'
-     bNoSmooth=False
-     CollisionRadius=34.000000
-     CollisionHeight=8.000000
-     Mass=50.000000
-	 LCMode=1
+      hitdamage=300
+      TapTime=0.000000
+      LCChan=None
+      LCMode=1
+      ffRefireTimer=1.100000
+      bGraphicsInitialized=False
+      OrgClass=None
+      WeaponDescription="Classification: Energy Rifle"
+      InstFlash=-0.400000
+      InstFog=(X=800.000000)
+      PickupAmmoCount=50
+      bInstantHit=True
+      bAltWarnTarget=True
+      bSplashDamage=True
+      FiringSpeed=2.000000
+      FireOffset=(X=10.000000,Y=-5.000000,Z=-8.000000)
+      MyDamageType="jolted"
+      aimerror=650.000000
+      AIRating=0.630000
+      AltRefireRate=0.700000
+      AltFireSound=Sound'UnrealShare.ASMD.TazerAltFire'
+      SelectSound=Sound'UnrealShare.ASMD.TazerSelect'
+      DeathMessage="%k electrified %o with the %w."
+      NameColor=(R=128,G=0)
+      AutoSwitchPriority=4
+      InventoryGroup=4
+      PickupMessage="You got the Siege Enhanced Shock Rifle."
+      ItemName="Siege Enhanced Shock Rifle"
+      PlayerViewOffset=(X=4.400000,Y=-1.700000,Z=-1.600000)
+      PlayerViewMesh=LodMesh'Botpack.sshockm'
+      PlayerViewScale=2.000000
+      BobDamping=0.975000
+      PickupViewMesh=LodMesh'Botpack.ASMD2pick'
+      ThirdPersonMesh=LodMesh'Botpack.SASMD2hand'
+      PickupSound=Sound'UnrealShare.Pickups.WeaponPickup'
+      Mesh=LodMesh'Botpack.ASMD2pick'
+      bNoSmooth=False
+      CollisionRadius=34.000000
+      CollisionHeight=8.000000
+      Mass=50.000000
 }

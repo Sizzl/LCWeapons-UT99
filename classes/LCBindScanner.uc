@@ -121,6 +121,8 @@ function string MutatedVersion( string WeapName)
 		return "zp_e";
 	if ( InStr(Caps(WeapName),"ASMDPULSERIFLE") >= 0 )
 		return "lc_apr";
+	if ( InStr(Caps(WeapName),"PULSEGUN") >= 0 )
+		return "lc_pg";
 	if ( InStr(Caps(WeapName),"MINIGUN") >= 0 )
 		return "lc_m";
 	if ( InStr(Caps(WeapName),"SIEGEINSTAGIBRIFLE") >= 0 )
@@ -185,11 +187,11 @@ static function string GetTheWord3( string Text)
 
 defaultproperties
 {
-	bNetTemporary=False
-	bHidden=True
-	bAlwaysRelevant=False
-	NetPriority=2
-	LifeSpan=50
-	RemoteRole=ROLE_None
-	CurIdx=1
+      CurIdx=1
+      LocalPlayer=None
+      bNoBinds=False
+      bHidden=True
+      RemoteRole=ROLE_None
+      LifeSpan=50.000000
+      NetPriority=2.000000
 }

@@ -23,3 +23,8 @@ simulated event PostNetBeginPlay()
 		}
 	}
 }
+
+defaultproperties
+{
+      TCL=None
+}

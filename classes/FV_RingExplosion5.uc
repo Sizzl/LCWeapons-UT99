@@ -39,3 +39,7 @@ simulated function SpawnExtraEffects()
 	bExtraEffectsSpawned = true;
 }
 
+defaultproperties
+{
+      bIsLC=False
+}

@@ -95,8 +95,12 @@ simulated event PostTouch(Actor other)
 
 defaultproperties
 {
-    bAlwaysRelevant=True
-    bNetTemporary=True
-    RemoteRole=ROLE_SimulatedProxy
-    bCollideActors=False
+      KickVelocity=(X=0.000000,Y=0.000000,Z=0.000000)
+      KickedClasses="None"
+      bKillVelocity=False
+      LocalPlayer=None
+      bAlwaysRelevant=True
+      bNetTemporary=True
+      RemoteRole=ROLE_SimulatedProxy
+      bCollideActors=False
 }

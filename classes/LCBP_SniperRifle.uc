@@ -9,7 +9,7 @@ simulated function ProcessTraceHit( Actor Other, vector HitLocation, vector HitN
 	{
 		if ( Other.bIsPawn 
 		&& (CanHeadshot(Instigator) || CanHeadshot(Pawn(Owner))) 
-		&& (HitLocation.Z - Other.Location.Z > HeadshotHeight(Pawn(Other))) )
+		&& (HitLocation.Z - Other.Location.Z > HeadshotHeight(Pawn(Other),bUseHeadshotAdjustment)) )
 		{
 		}
 		else
@@ -25,5 +25,5 @@ simulated function ProcessTraceHit( Actor Other, vector HitLocation, vector HitN
 
 defaultproperties
 {
-	FireAnimRate=3.0
+      FireAnimRate=3.000000
 }

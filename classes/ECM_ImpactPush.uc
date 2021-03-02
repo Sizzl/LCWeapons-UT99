@@ -48,9 +48,9 @@ function ProcessPush( PlayerPawn Client)
 	Client.Velocity += PushVelocity;
 }
 
-
-
 defaultproperties
 {
-	bActive=True
+      PushTimeStamp=0.000000
+      PushVelocity=(X=0.000000,Y=0.000000,Z=0.000000)
+      bActive=True
 }

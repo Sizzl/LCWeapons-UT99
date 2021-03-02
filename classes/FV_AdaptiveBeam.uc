@@ -47,3 +47,8 @@ simulated function AdaptFrom( class<Effects> Other)
 	Style = Other.default.Style;
 	DrawScale = Other.default.DrawScale;
 }
+
+defaultproperties
+{
+      bIsLC=False
+}

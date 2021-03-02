@@ -65,12 +65,14 @@ simulated event PostNetBeginPlay()
 
 defaultproperties
 {
-	bNetTemporary=True
-	DrawType=DT_None
-	bHidden=False
-	CollisionHeight=100
-	CollisionRadius=100
-	NetPriority=2
-	NetUpdateFrequency=40
-	LifeSpan=0.8
+      CmpX=0
+      CmpY=0
+      bHidden=False
+      bNetTemporary=True
+      LifeSpan=0.800000
+      DrawType=DT_None
+      CollisionRadius=100.000000
+      CollisionHeight=100.000000
+      NetPriority=2.000000
+      NetUpdateFrequency=40.000000
 }

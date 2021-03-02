@@ -10,8 +10,10 @@ simulated event PostBeginPlay()
 
 simulated event Timer()
 {
+	local string HudClass;
+	HudClass = string(LocalPlayer.myHud.Class);
 	//Hud was replaced
-	if ( InStr(caps(string(LocalPlayer.myHud)),"PURE") > 0 )
+	if ( InStr(Caps(HudClass),"PURE") >= 0 && Caps(Left(HudClass,12)) != "INSTAGIBPLUS" )
 	{
 		NextHUDMutator = LocalPlayer.myHud.HUDMutator;
 		LocalPlayer.myHud.HUDMutator = self;
@@ -24,4 +26,9 @@ simulated event PostRender (Canvas Canvas)
 {
 	if ( (LocalPlayer != None) && (LocalPlayer.Weapon != None) )
 		LocalPlayer.Weapon.PostRender(Canvas);
+}
+
+defaultproperties
+{
+      LocalPlayer=None
 }

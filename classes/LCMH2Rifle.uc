@@ -238,8 +238,11 @@ simulated function ProcessTraceHit( Actor Other, Vector HitLocation, Vector HitN
 
 defaultproperties
 {
-    WeaponDescription="MH2 Rifle"
-	FireAnimRate=1.6
-    FiringSpeed=1.8
-    ffRefireTimer=0.407
+      bGraphicsInitialized=False
+      bZoom=False
+      RifleDamage=0
+      BloodClass=None
+      ffRefireTimer=0.407000
+      FireAnimRate=1.600000
+      WeaponDescription="MH2 Rifle"
 }

@@ -91,11 +91,11 @@ function MutatorTakeDamage( out int ActualDamage, Pawn Victim, Pawn InstigatedBy
 		NextDamageMutator.MutatorTakeDamage( ActualDamage, Victim, InstigatedBy, HitLocation, Momentum, DamageType );
 }
 
-
 defaultproperties
 {
-	LolPushChance=10
-	LimitBalls=4
-	ForceBallDamage=0.100000
-	bKeepBoots=true
+      ForceBallDamage=0.100000
+      LolPushChance=10.000000
+      bLolAffectsTeam=False
+      bKeepBoots=True
+      LimitBalls=4
 }

@@ -38,5 +38,6 @@ simulated event Destroyed()
 
 defaultproperties
 {
-	Texture=Texture'FV_ColorShock.ASMDAlt_0_a00'
+      Team=0
+      Texture=Texture'FV_ColorShock.ASMDAlt_0_a00'
 }

@@ -84,9 +84,11 @@ function bool ProcessTrailer( Actor Trailer)
 	return true;
 }
 
-
 defaultproperties
 {
-    ActorClass=class'Effects'
-    RemoteRole=ROLE_None
+      Channel=None
+      Advancer=None
+      LastTrailer=None
+      ActorClass=Class'Engine.Effects'
+      RemoteRole=ROLE_None
 }

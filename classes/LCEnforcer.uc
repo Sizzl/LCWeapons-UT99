@@ -332,9 +332,10 @@ simulated function FixOffset( float Y)
 	FireOffset.Y = Y;
 }
 
-
 defaultproperties
 {
-     AccuracyScale=1.000000
-     hitdamage=17
+      AccuracyScale=1.000000
+      LCChan=None
+      LCMode=0
+      bBulletNow=False
 }

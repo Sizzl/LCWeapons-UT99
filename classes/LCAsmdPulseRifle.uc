@@ -147,8 +147,10 @@ simulated event RenderOverlays( canvas Canvas )
 {
 	MultiSkins[1] = none;
 	Texture'Ammoled'.NotifyActor = Self;
+	//ScriptedTexture(Texture'Ammoled').NotifyActor = Self;
 	Super.RenderOverlays(Canvas);
 	Texture'Ammoled'.NotifyActor = None;
+	//ScriptedTexture(Texture'Ammoled').NotifyActor = None;
 	MultiSkins[1] = Default.MultiSkins[1];
 }
 
@@ -253,7 +255,7 @@ simulated event RenderTexture(ScriptedTexture Tex)
 	Temp = String(AmmoType.AmmoAmount);
 	while(Len(Temp) < 3) Temp = "0"$Temp;
 
-	Tex.DrawTile( 30, 100, (Min(AmmoType.AmmoAmount,AmmoType.Default.AmmoAmount)*196)/AmmoType.Default.AmmoAmount, 10, 0, 0, 1, 1, Texture'AmmoCountBar', False );
+	Tex.DrawTile( 30, 100, (Min(AmmoType.AmmoAmount,AmmoType.Default.AmmoAmount)*196)/AmmoType.Default.AmmoAmount, 10, 0, 0, 1, 1, Texture'Botpack.AmmoCountBar', False );
 
 	if(AmmoType.AmmoAmount < 10)
 	{
@@ -608,51 +610,57 @@ function setHand( float Hand)
 	else
 	{
 		FireOffset.Y = -1 * Default.FireOffset.Y;
-		Mesh = mesh'PulseGunR';
+		Mesh = mesh(DynamicLoadObject("Botpack.PulseGunR", class'Mesh'));
 	}
 }
 
-
 defaultproperties
 {
-	ExplosionClass=class'FV_RingExplosion5'
-
-     DownSound=Sound'Botpack.PulseGun.PulseDown'
-     hitdamage=50
-     PickupAmmoCount=199
-     bInstantHit=True
-     bRapidFire=True
-     FireOffset=(X=16.000000,Y=-14.000000,Z=-8.000000)
-     ProjectileClass=None
-     AltProjectileClass=Class'Botpack.ShockProj'
-     MyDamageType=jolted
-     AltDamageType=jolted
-     shakemag=135.000000
-     shakevert=8.000000
-     AIRating=0.700000
-     RefireRate=0.950000
-     AltRefireRate=0.990000
-     SelectSound=Sound'Botpack.PulseGun.PulsePickup'
-     DeathMessage="%o was torn to pieces by %k's %w."
-     NameColor=(R=128,G=0,B=128)
-     FlashLength=0.020000
-     AutoSwitchPriority=5
-     InventoryGroup=5
-     PickupMessage="You got the ASMD Pulse Rifle"
-     ItemName="Pulse Gun"
-     PlayerViewOffset=(X=1.500000,Z=-2.000000)
-     PlayerViewMesh=LodMesh'Botpack.PulseGunR'
-     PickupViewMesh=LodMesh'Botpack.PulsePickup'
-     ThirdPersonMesh=LodMesh'Botpack.PulseGun3rd'
-     ThirdPersonScale=0.400000
-     StatusIcon=Texture'Botpack.Icons.UsePulse'
-     bMuzzleFlashParticles=True
-     MuzzleFlashStyle=STY_Translucent
-     MuzzleFlashMesh=LodMesh'Botpack.muzzPF3'
-     MuzzleFlashScale=0.400000
-     MuzzleFlashTexture=Texture'Botpack.Skins.MuzzyPulse'
-     PickupSound=Sound'UnrealShare.Pickups.WeaponPickup'
-     Icon=Texture'Botpack.Icons.UsePulse'
-     Mesh=LodMesh'Botpack.PulsePickup'
-     bNoSmooth=False
+      Angle=0.000000
+      Count=0.000000
+      DownSound=Sound'Botpack.PulseGun.PulseDown'
+      hitdamage=50
+      bGraphicsInitialized=False
+      bTeamColor=False
+      OrgClass=None
+      ExplosionClass=Class'LCWeapons_0025uta.FV_RingExplosion5'
+      LCChan=None
+      LCMode=0
+      ClientSleepAgain=0.000000
+      LastShot=0.000000
+      PickupAmmoCount=199
+      bInstantHit=True
+      bRapidFire=True
+      FireOffset=(X=16.000000,Y=-14.000000,Z=-8.000000)
+      AltProjectileClass=Class'Botpack.ShockProj'
+      MyDamageType="jolted"
+      AltDamageType="jolted"
+      shakemag=135.000000
+      shakevert=8.000000
+      AIRating=0.700000
+      RefireRate=0.950000
+      AltRefireRate=0.990000
+      SelectSound=Sound'Botpack.PulseGun.PulsePickup'
+      DeathMessage="%o was torn to pieces by %k's %w."
+      NameColor=(R=128,G=0,B=128)
+      FlashLength=0.020000
+      AutoSwitchPriority=5
+      InventoryGroup=5
+      PickupMessage="You got the ASMD Pulse Rifle"
+      ItemName="Pulse Gun"
+      PlayerViewOffset=(X=1.500000,Z=-2.000000)
+      PlayerViewMesh=LodMesh'Botpack.PulseGunR'
+      PickupViewMesh=LodMesh'Botpack.PulsePickup'
+      ThirdPersonMesh=LodMesh'Botpack.PulseGun3rd'
+      ThirdPersonScale=0.400000
+      StatusIcon=Texture'Botpack.Icons.UsePulse'
+      bMuzzleFlashParticles=True
+      MuzzleFlashStyle=STY_Translucent
+      MuzzleFlashMesh=LodMesh'Botpack.muzzPF3'
+      MuzzleFlashScale=0.400000
+      MuzzleFlashTexture=Texture'Botpack.Skins.MuzzyPulse'
+      PickupSound=Sound'UnrealShare.Pickups.WeaponPickup'
+      Icon=Texture'Botpack.Icons.UsePulse'
+      Mesh=LodMesh'Botpack.PulsePickup'
+      bNoSmooth=False
 }

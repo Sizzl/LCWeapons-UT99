@@ -191,6 +191,7 @@ simulated event RenderOverlays( Canvas Canvas )
 	}
 }
 
+
 simulated function SimGenerateBullet()
 {
 	if ( !IsLC() )
@@ -200,6 +201,9 @@ simulated function SimGenerateBullet()
 	if ( LCChan.bSimAmmo && (AmmoType != none && AmmoType.AmmoAmount > 0) )
 		AmmoType.AmmoAmount--;
 }
+
+
+
 
 state NormalFire
 {
@@ -362,18 +366,25 @@ simulated function bool HandleLCFire( bool bFire, bool bAltFire)
 	return true; //Don't let LCChan hitscan fire
 }
 
-
 defaultproperties
 {
-	bSpawnTracers=True
-	SlowSleep=0.13
-	FastSleep=0.08
-	SlowTIW=0.15
-	FastTIW=0.10
-	SlowAccuracy=0.2
-	FastAccuracy=0.75
-	BaseDamage=9
-	RandomDamage=6
-	PowerFactorPri=1.0
-	PowerFactorSec=1.0
+      LCChan=None
+      LCMode=0
+      bBulletNow=False
+      bSpawnTracers=True
+      bTIW=False
+      bDebug=False
+      bNoLockdown=False
+      SlowSleep=0.130000
+      FastSleep=0.080000
+      SlowTIW=0.150000
+      FastTIW=0.100000
+      PowerFactorPri=1.000000
+      PowerFactorSec=1.000000
+      SlowAccuracy=0.200000
+      FastAccuracy=0.750000
+      TIWCounter=0.000000
+      BaseDamage=9
+      RandomDamage=6
+      LastStartTrace=(X=0.000000,Y=0.000000,Z=0.000000)
 }

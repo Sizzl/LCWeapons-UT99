@@ -78,3 +78,9 @@ simulated function InitProperties( Weapon W)
 		SR.BeamPrototype  = SR.default.BeamPrototype;
 	}
 }
+
+defaultproperties
+{
+      BeamPrototype=None
+      ExplosionPrototype=None
+}

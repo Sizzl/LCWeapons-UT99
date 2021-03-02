@@ -151,9 +151,10 @@ state Zooming
 
 defaultproperties
 {
-    ffAimError=20
-    DeathMessage="%k sent %o to an early grave"
-    ItemName=NYACovertSniper
-    PickupMessage="You picked up a {NYA}Covert Sniper Rifle!"
-    PickupAmmoCount=600
+      bZoom=False
+      ffAimError=20.000000
+      PickupAmmoCount=600
+      DeathMessage="%k sent %o to an early grave"
+      PickupMessage="You picked up a {NYA}Covert Sniper Rifle!"
+      ItemName="NYACovertSniper"
 }

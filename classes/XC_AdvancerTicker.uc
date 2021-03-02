@@ -29,3 +29,7 @@ event Timer()
 	Advancer.RegisterHUDMutator();
 }
 
+defaultproperties
+{
+      Advancer=None
+}

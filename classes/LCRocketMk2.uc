@@ -29,9 +29,7 @@ auto state Flying
 	}
 }
 
-
-
 defaultproperties
 {
-	bNetTemporary=False;
+      bNetTemporary=False
 }

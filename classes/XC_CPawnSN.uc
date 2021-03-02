@@ -21,6 +21,8 @@ event Actor SpawnNotification( Actor A)
 
 defaultproperties
 {
-    ActorClass=class'Pawn'
-    RemoteRole=ROLE_None
+      Channel=None
+      Advancer=None
+      ActorClass=Class'Engine.Pawn'
+      RemoteRole=ROLE_None
 }

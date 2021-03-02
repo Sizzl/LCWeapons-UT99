@@ -7,9 +7,9 @@ var() config bool bUseLagCompensation;
 var() config int ForcePredictionCap;
 var() config bool bHighFidelityMode;
 
-
 defaultproperties
 {
-	bUseLagCompensation=True
-	ForcePredictionCap=-1
+      bUseLagCompensation=True
+      ForcePredictionCap=-1
+      bHighFidelityMode=False
 }

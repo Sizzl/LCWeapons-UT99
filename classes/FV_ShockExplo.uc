@@ -18,3 +18,8 @@ simulated event PostNetBeginPlay()
 		LifeSpan = 0.001;
 	}
 }
+
+defaultproperties
+{
+      bIsLC=False
+}

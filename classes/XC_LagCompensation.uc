@@ -323,9 +323,13 @@ function ffRevertPositions()
 
 function ffRevertPositions_XC()
 {
-	local XC_PosList PosList;
-	ForEach DynamicActors( class'XC_PosList', PosList, 'CollidingPosList')
-		PosList.DisableCollision();
+	ffRevertPositions();
+
+	// Requires XC_Core script compile functions
+
+	//local XC_PosList PosList;
+	//ForEach DynamicActors( class'XC_PosList', PosList, 'CollidingPosList')
+	//	PosList.DisableCollision();
 }
 
 
@@ -394,19 +398,129 @@ function XC_PosList SetupPosList( Actor Other)
 	return NewPosList;
 }
 
-
 defaultproperties
 {
-	bGameRelevant=True
-	ffMaxLatency=650
-	MaxPredictNonLC=150
-	RemoteRole=ROLE_None
-	PingMult=1
-	bKickers=True
-	bSWJumpPads=True
-	bWeaponAnim=True
-	bSimulateAmmo=True
-	bUsePrediction=True
-	bEnableMHhack=True
-	bReplaceRockets=true
+      ffCompList=None
+      iCombo=0
+      ffMaxLatency=650.000000
+      pkg=""
+      ffCurId=0
+      LastTimeSeconds=0.000000
+      XCGE=None
+      bNoBinds=False
+      bNeedsHiddenEffects=False
+      PingMult=1.000000
+      PingAdd=0.000000
+      LinkedPawn=None
+      bKickers=True
+      bSWJumpPads=True
+      bWeaponAnim=True
+      bSimulateAmmo=True
+      bUsePrediction=True
+      bEnableMHhack=True
+      bReplaceRockets=True
+      bTIWFire=False
+      MaxPredictNonLC=150.000000
+      swPads(0)=None
+      swPads(1)=None
+      swPads(2)=None
+      swPads(3)=None
+      swPads(4)=None
+      swPads(5)=None
+      swPads(6)=None
+      swPads(7)=None
+      swPads(8)=None
+      swPads(9)=None
+      swPads(10)=None
+      swPads(11)=None
+      swPads(12)=None
+      swPads(13)=None
+      swPads(14)=None
+      swPads(15)=None
+      swPads(16)=None
+      swPads(17)=None
+      swPads(18)=None
+      swPads(19)=None
+      swPads(20)=None
+      swPads(21)=None
+      swPads(22)=None
+      swPads(23)=None
+      swPads(24)=None
+      swPads(25)=None
+      swPads(26)=None
+      swPads(27)=None
+      swPads(28)=None
+      swPads(29)=None
+      swPads(30)=None
+      swPads(31)=None
+      swPads(32)=None
+      swPads(33)=None
+      swPads(34)=None
+      swPads(35)=None
+      swPads(36)=None
+      swPads(37)=None
+      swPads(38)=None
+      swPads(39)=None
+      swPads(40)=None
+      swPads(41)=None
+      swPads(42)=None
+      swPads(43)=None
+      swPads(44)=None
+      swPads(45)=None
+      swPads(46)=None
+      swPads(47)=None
+      swPads(48)=None
+      swPads(49)=None
+      swPads(50)=None
+      swPads(51)=None
+      swPads(52)=None
+      swPads(53)=None
+      swPads(54)=None
+      swPads(55)=None
+      swPads(56)=None
+      swPads(57)=None
+      swPads(58)=None
+      swPads(59)=None
+      swPads(60)=None
+      swPads(61)=None
+      swPads(62)=None
+      PositionIndex=0
+      bAddPosition=False
+      PositionTimeStamp(0)=0.000000
+      PositionTimeStamp(1)=0.000000
+      PositionTimeStamp(2)=0.000000
+      PositionTimeStamp(3)=0.000000
+      PositionTimeStamp(4)=0.000000
+      PositionTimeStamp(5)=0.000000
+      PositionTimeStamp(6)=0.000000
+      PositionTimeStamp(7)=0.000000
+      PositionTimeStamp(8)=0.000000
+      PositionTimeStamp(9)=0.000000
+      PositionTimeStamp(10)=0.000000
+      PositionTimeStamp(11)=0.000000
+      PositionTimeStamp(12)=0.000000
+      PositionTimeStamp(13)=0.000000
+      PositionTimeStamp(14)=0.000000
+      PositionTimeStamp(15)=0.000000
+      PositionTimeStamp(16)=0.000000
+      PositionTimeStamp(17)=0.000000
+      PositionTimeStamp(18)=0.000000
+      PositionTimeStamp(19)=0.000000
+      PositionTimeStamp(20)=0.000000
+      PositionTimeStamp(21)=0.000000
+      PositionTimeStamp(22)=0.000000
+      PositionTimeStamp(23)=0.000000
+      PositionTimeStamp(24)=0.000000
+      PositionTimeStamp(25)=0.000000
+      PositionTimeStamp(26)=0.000000
+      PositionTimeStamp(27)=0.000000
+      PositionTimeStamp(28)=0.000000
+      PositionTimeStamp(29)=0.000000
+      PositionTimeStamp(30)=0.000000
+      PositionTimeStamp(31)=0.000000
+      PositionTimer=0.000000
+      Marker(0)=(Index=0,IndexNext=0,Alpha=0.000000)
+      Marker(1)=(Index=0,IndexNext=0,Alpha=0.000000)
+      RemoteRole=ROLE_None
+      bGameRelevant=True
 }

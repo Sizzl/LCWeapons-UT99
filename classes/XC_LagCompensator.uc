@@ -237,10 +237,27 @@ function bool ValidateAccuracy( Weapon Weapon, int CmpRot, vector Start, vector 
 {
 	local rotator View;
 	local vector X, Y, Z;
+	local float AimError;
+	local float Range;
 
-	if ( Accuracy != Weapon.GetAimError() ) //Weapon aim error mismatch
+	if (Weapon.isA('LCAsmdPulseRifle'))
+		AimError = LCAsmdPulseRifle(Weapon).GetAimError();
+	else if (Weapon.isA('LCEnforcer'))
+		AimError = LCEnforcer(Weapon).GetAimError();
+	else if (Weapon.isA('LCImpactHammer'))
+		AimError = LCImpactHammer(Weapon).GetAimError();
+	else if (Weapon.isA('LCMinigun2'))
+		AimError = LCMinigun2(Weapon).GetAimError();
+	else if (Weapon.isA('LCShockRifle'))
+		AimError = LCShockRifle(Weapon).GetAimError();
+	else if (Weapon.isA('LCSiegeInstaGibRifle'))
+		AimError = LCSiegeInstaGibRifle(Weapon).GetAimError();
+	else 
+		AimError = LCSniperRifle(Weapon).GetAimError();
+
+	if ( Accuracy != AimError ) //Weapon aim error mismatch
 	{
-		Error = "Aim error mismatch:"@Accuracy@"vs"@Weapon.GetAimError();
+		Error = "Aim error mismatch:"@Accuracy@"vs"@AimError;
 		return false; //Delay
 	}
 	
@@ -248,8 +265,29 @@ function bool ValidateAccuracy( Weapon Weapon, int CmpRot, vector Start, vector 
 	GetAxes( View, X,Y,Z);
 	if ( Accuracy != 0 ) //Need to reprocess end point
 	{	
-		X = Normal( X * Weapon.GetRange(Flags) 
-			+ LCS.static.StaticAimError( Y, Z, Accuracy, Flags >>> 16) );
+		//Range = Weapon.GetRange(Flags)
+		if (Weapon.isA('LC_AARV17'))
+			Range = LC_AARV17(Weapon).GetRange(Flags);
+		else if (Weapon.isA('LCAsmdPulseRifle'))
+			Range = LCAsmdPulseRifle(Weapon).GetRange(Flags);
+		else if (Weapon.isA('LCChamRifle'))
+			Range = LCChamRifle(Weapon).GetRange(Flags);
+		else if (Weapon.isA('LCEnforcer'))
+			Range = LCEnforcer(Weapon).GetRange(Flags);
+		else if (Weapon.isA('LCImpactHammer'))
+			Range = LCImpactHammer(Weapon).GetRange(Flags);
+		else if (Weapon.isA('LCMH2Rifle'))
+			Range = LCMH2Rifle(Weapon).GetRange(Flags);
+		else if (Weapon.isA('LCMinigun2'))
+			Range = LCMinigun2(Weapon).GetRange(Flags);
+		else if (Weapon.isA('LCShockRifle'))
+			Range = LCShockRifle(Weapon).GetRange(Flags);
+		else if (Weapon.isA('LCSiegeInstaGibRifle'))
+			Range = LCSiegeInstaGibRifle(Weapon).GetRange(Flags);
+		else // if (Weapon.isA('LCSniperRifle'))
+			Range = LCSniperRifle(Weapon).GetRange(Flags);
+		
+		X = Normal( X * Range + LCS.static.StaticAimError( Y, Z, Accuracy, Flags >>> 16) );
 	}
 
 	if ( (VSize(End-Start) > 30) && (VSize( X - Normal(End-Start)) > 0.05) )
@@ -274,7 +312,28 @@ function bool ValidateWeaponRange( Weapon Weapon, int ExtraFlags, vector StartTr
 	local float YDist;
 	
 	NewExtraFlags = ExtraFlags;
-	Range      = Weapon.GetRange(NewExtraFlags);
+	// Range      = Weapon.GetRange(NewExtraFlags);
+	if (Weapon.isA('LC_AARV17'))
+		Range = LC_AARV17(Weapon).GetRange(NewExtraFlags);
+	else if (Weapon.isA('LCAsmdPulseRifle'))
+		Range = LCAsmdPulseRifle(Weapon).GetRange(NewExtraFlags);
+	else if (Weapon.isA('LCChamRifle'))
+		Range = LCChamRifle(Weapon).GetRange(NewExtraFlags);
+	else if (Weapon.isA('LCEnforcer'))
+		Range = LCEnforcer(Weapon).GetRange(NewExtraFlags);
+	else if (Weapon.isA('LCImpactHammer'))
+		Range = LCImpactHammer(Weapon).GetRange(NewExtraFlags);
+	else if (Weapon.isA('LCMH2Rifle'))
+		Range = LCMH2Rifle(Weapon).GetRange(NewExtraFlags);
+	else if (Weapon.isA('LCMinigun2'))
+		Range = LCMinigun2(Weapon).GetRange(NewExtraFlags);
+	else if (Weapon.isA('LCShockRifle'))
+		Range = LCShockRifle(Weapon).GetRange(NewExtraFlags);
+	else if (Weapon.isA('LCSiegeInstaGibRifle'))
+		Range = LCSiegeInstaGibRifle(Weapon).GetRange(NewExtraFlags);
+	else // if (Weapon.isA('LCSniperRifle'))
+		Range = LCSniperRifle(Weapon).GetRange(NewExtraFlags);
+
 	PlayerView = LCS.static.DecompressRotator( CmpRot);
 	GetAxes( PlayerView, X, Y, Z);
 	YDist = ((HitLocation - StartTrace) dot X) - 1;
@@ -477,7 +536,7 @@ function bool ImageDropping( Pawn Other, vector HitDir)
 {
 	if ( (HitDir.Z < 40) || (Other.Velocity != vect(0,0,0)) || (Other.Physics != PHYS_Walking) )
 		return false; //Minimum threshold
-	return Normal(HitDir).Z > 0.75; //40บ angle fall	
+	return Normal(HitDir).Z > 0.75; //40ยบ angle fall	
 }
 
 /*---------------------------------------------------------------
@@ -494,11 +553,28 @@ final function float GetEngineLatency()
 	return float(LastPing) * Level.TimeDilation / 1000.0;
 }
 
-
-
 defaultproperties
 {
-    bGameRelevant=True
-	RemoteRole=ROLE_None
-	bCollideWhenPlacing=False
+      Mutator=None
+      ffCompNext=None
+      CompChannel=None
+      ffOwner=None
+      PosList=None
+      ffNoHit=False
+      ffDelaying=0
+      ffWeapon=None
+      ffCTimer=0.000000
+      ffCTimeStamp=0.000000
+      ffDelayCount=0.000000
+      LastPing=0
+      LastLoss=0
+      ffRefireTimer=0.000000
+      ffCurRegTimer=0.000000
+      ImpreciseTimer=0.000000
+      ffCollideActors=False
+      ffBlockActors=False
+      ffBlockPlayers=False
+      ffProjTarget=False
+      RemoteRole=ROLE_None
+      bGameRelevant=True
 }

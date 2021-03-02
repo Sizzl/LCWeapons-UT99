@@ -23,10 +23,9 @@ event Actor SpawnNotification( actor A)
 	return A;
 }
 
-
-
 defaultproperties
 {
-	ActorClass=class'LCDummyWeapon'
-	RemoteRole=ROLE_None
+      Mutator=None
+      ActorClass=Class'LCWeapons_0025uta.LCDummyWeapon'
+      RemoteRole=ROLE_None
 }

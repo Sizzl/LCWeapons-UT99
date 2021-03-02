@@ -81,21 +81,13 @@ simulated function ProcessTraceHit(Actor Other, Vector HitLocation, Vector HitNo
 	}
 }
 
-
-
 defaultproperties
 {
-     MaxTargetRange=8128.000000
-     PickupAmmoCount=100
-     shakemag=135.000000
-     shakevert=8.000000
-     AIRating=0.750000
-     PickupMessage="You picked up the Liandri Minigun"
-     ItemName="Liandri Minigun"
-     LightEffect=LE_NonIncidence
-     LightBrightness=250
-     LightHue=28
-     LightSaturation=32
-     LightRadius=6
-     bSpawnTracers=False
+      bGraphicsInitialized=False
+      OrgClass=None
+      MaxTargetRange=8128.000000
+      PickupAmmoCount=100
+      AIRating=0.750000
+      PickupMessage="You picked up the Liandri Minigun"
+      ItemName="Liandri Minigun"
 }
