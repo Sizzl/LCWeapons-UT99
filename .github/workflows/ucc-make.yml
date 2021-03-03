@@ -28,12 +28,13 @@ jobs:
     - name: ucc make
       run: |
         sed '/EditPackages=Core/ a EditPackages=GlobalFunctions_LC' ./ut/ut-server/System/Default.ini >./ut/ut-server/System/UnrealTournament.tmp
-        sed '/EditPackages=UTBrowser/ a EditPackages=LeagueAS140\nEditPackages=ECM\nEditPackages=SiegeUtil_A\nEditPackages=TimerUtil\nEditPackages=UTPureRC7H\nEditPackages=LCWeapons_0025test' ./ut/ut-server/System/UnrealTournament.tmp >./ut/ut-server/System/UnrealTournament.ini
+        sed '/EditPackages=UTBrowser/ a EditPackages=LeagueAS140\nEditPackages=ECM\nEditPackages=UTPureRC7H\nEditPackages=LCWeapons_0025test' ./ut/ut-server/System/UnrealTournament.tmp >./ut/ut-server/System/UnrealTournament.ini
         chmod +x ./ut/ut-server/System/ucc-bin
         if [[ -d ./ut/ut-server/LCWeapons_0025test/classes ]]
         then
           mv ./ut/ut-server/LCWeapons_0025test/classes ./ut/ut-server/LCWeapons_0025test/Classes
         fi
+        cp -f ./ut/ut-server/LCWeapons_0025test/*.u ./ut/ut-server/System/
         cp -f ./ut/ut-server/LCWeapons_0025test/System/*.* ./ut/ut-server/System/
         cp -f ./ut/ut-server/LCWeapons_0025test/Textures/*.utx ./ut/ut-server/Textures/
         ./ut/ut-server/System/ucc-bin batchexport Botpack.u CLASS UC ./ut/ut-server/Botpack/Classes/ -nohomedir >/dev/null
