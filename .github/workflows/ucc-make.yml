@@ -34,13 +34,10 @@ jobs:
         then
           mv ./ut/ut-server/LCWeapons_0025test/classes ./ut/ut-server/LCWeapons_0025test/Classes
         fi
-        cp -f ./ut/ut-server/LCWeapons_0025test/*.u ./ut/ut-server/System/
-        cp -f ./ut/ut-server/LCWeapons_0025test/System/*.u ./ut/ut-server/System/
-        cp -f ./ut/ut-server/LCWeapons_0025test/System/*.int ./ut/ut-server/System/
+        cp -f ./ut/ut-server/LCWeapons_0025test/System/*.* ./ut/ut-server/System/
         cp -f ./ut/ut-server/LCWeapons_0025test/Textures/*.utx ./ut/ut-server/Textures/
         ./ut/ut-server/System/ucc-bin batchexport Botpack.u CLASS UC ./ut/ut-server/Botpack/Classes/ -nohomedir >/dev/null
         ./ut/ut-server/System/ucc-bin batchexport UTMenu.u CLASS UC ./ut/ut-server/UTMenu/Classes/ -nohomedir >/dev/null
-        ./ut/ut-server/System/ucc-bin batchexport GlobalFunctions_LC.u CLASS UC ./ut/ut-server/GlobalFunctions_LC/Classes/ -nohomedir >/dev/null
         ./ut/ut-server/System/ucc-bin batchexport ECM.u CLASS UC ./ut/ut-server/ECM/Classes/ -nohomedir >/dev/null
         ./ut/ut-server/System/ucc-bin batchexport UTPureRC7H.u CLASS UC ./ut/ut-server/UTPureRC7H/Classes/ -nohomedir >/dev/null
         cd ./ut/ut-server/System/
