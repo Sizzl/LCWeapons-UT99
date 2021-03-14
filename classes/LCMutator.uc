@@ -48,7 +48,7 @@ event PreBeginPlay()
 	if (bDebug)
 		log("Started PBP",'LCWeapons');
 	
-	bNoLockdownGame = Level.Game.GetPropertyText("NoLockdown") == 1; // Check v469 Lockdown
+	bNoLockdownGame = bool(Level.Game.GetPropertyText("NoLockdown")); // Check v469 Lockdown
 
 	Level.Game.RegisterMessageMutator(self);
 }
