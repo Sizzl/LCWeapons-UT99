@@ -12,13 +12,22 @@ var XC_CompensatorChannel CompChannel;
 var Pawn ffOwner;
 var XC_PosList PosList;
 var bool ffNoHit; //Fast access
+var bool bDebug;
+var int Mode;
 var int ffDelaying; //We're delaying hits in order to fix our time formula
 var Weapon ffWeapon;
 var float ffCTimer; //Timer our last shot was fired
 var float ffCTimeStamp; //Timestamp the server is keeping
 var float ffDelayCount;
 var int LastPing;
+var int HistPing[64];
+var int HistPingPos;
+var bool HistPingFull;
 var int LastLoss;
+var int HistLoss[64];
+var int HistLossPos;
+var bool HistLossFull;
+
 var float ffRefireTimer; //If above shoot * 2, do not fire
 var float ffCurRegTimer; //Current registered timer
 var float ImpreciseTimer; //Give the player an opportunity to miss security checks once in a while
@@ -29,7 +38,7 @@ var private bool ffCollideActors, ffBlockActors, ffBlockPlayers, ffProjTarget;
 event Tick( private float ffDelta)
 {
 	local private float ffTmp;
-
+	local int counter, slot, i, cumulative;
 	//Get rid of this compensator
 	if ( (ffOwner == none) || ffOwner.bDeleteMe )
 	{
@@ -37,12 +46,85 @@ event Tick( private float ffDelta)
 		return;
 	}
 
-	if ( (PlayerPawn(ffOwner) != none) && FRand() < 0.4 )
+	// Mode determines LastPing/LastLoss sampling levels
+	if (PlayerPawn(ffOwner) != none)
 	{
-		LastPing = int(PlayerPawn(ffOwner).ConsoleCommand("GETPING"));
-		LastLoss = int(PlayerPawn(ffOwner).ConsoleCommand("GETLOSS"));
-	}
+		if (Mode==1)
+		{
+			if (FRand() < 0.1)
+			{
+				LastPing = int(PlayerPawn(ffOwner).ConsoleCommand("GETPING"));
+				LastLoss = int(PlayerPawn(ffOwner).ConsoleCommand("GETLOSS"));
+				if (bDebug)
+					PlayerPawn(ffOwner).ClientMessage("Sampled ping:"@LastPing$", Loss:"@LastLoss);
+			}
+		}
+		else if (Mode==2)
+		{
+			if (FRand() < 0.1)
+			{
+				LastPing = LastPing/2 + int(PlayerPawn(ffOwner).ConsoleCommand("GETPING"))/2;
+				LastLoss = LastLoss/2 + int(PlayerPawn(ffOwner).ConsoleCommand("GETLOSS"))/2;
+				if (bDebug)
+					PlayerPawn(ffOwner).ClientMessage("Sampled smoothing ping:"@LastPing$", Loss:"@LastLoss);
+			}
+		}
+		else if (Mode==3)
+		{
+			if (FRand() < 0.1)
+			{
+				HistPing[HistPingPos] = int(PlayerPawn(ffOwner).ConsoleCommand("GETPING"));
+				HistPingPos++;
+				HistLoss[HistLossPos] = int(PlayerPawn(ffOwner).ConsoleCommand("GETLOSS"));
+				HistLossPos++;
 
+				if (HistPingPos > 63)
+				{
+					HistPingFull = true;
+					HistPingPos = 0;
+				}
+				if (HistPingFull)
+					slot = 63; // sample all slots from now on
+				else
+					slot = HistPingPos;	
+				cumulative = 0;
+				for (i = 0; i < slot; i++)
+				{
+					cumulative += HistPing[i];
+				}
+				LastPing = cumulative/slot;
+
+				if (HistLossPos > 63)
+				{
+					HistLossFull = true;
+					HistLossPos = 0;
+				}
+				if (HistLossFull)
+					slot = 63; // sample all slots from now on
+				else
+					slot = HistLossPos;	
+				cumulative = 0;
+				for (i = 0; i < slot; i++)
+				{
+					cumulative += HistLoss[i];
+				}
+				LastLoss = cumulative/slot;
+				if (bDebug)
+					PlayerPawn(ffOwner).ClientMessage("Sampled average ping:"@LastPing$", Loss:"@LastLoss);
+
+			}
+		}
+		else
+		{
+			if (FRand() < 0.4)
+			{
+				LastPing = int(PlayerPawn(ffOwner).ConsoleCommand("GETPING"));
+				LastLoss = int(PlayerPawn(ffOwner).ConsoleCommand("GETLOSS"));
+				if (bDebug)
+					PlayerPawn(ffOwner).ClientMessage("Sampled ping:"@LastPing$", Loss:"@LastLoss);
+			}
+		}
+	}
 	//Dead
 	if ( ffOwner.Health <= 0 )
 	{
@@ -577,4 +659,5 @@ defaultproperties
       ffProjTarget=False
       RemoteRole=ROLE_None
       bGameRelevant=True
+      Mode=0
 }

@@ -8,6 +8,8 @@ class XC_CompensatorChannel expands Info;
 var XC_LagCompensation LCActor;
 var XC_LagCompensator LCComp;
 var XC_ElementAdvancer LCAdv;
+var LCBindScanner BS;
+
 var PlayerPawn LocalPlayer;
 var float ffRefireTimer; //This will enforce security checks
 var float cAdv;
@@ -26,6 +28,8 @@ var float OldTimeStamp;
 var int CurrentSWJumpPad;
 var int ClientPredictCap;
 
+var bool bDebug;
+
 var bool bClientPendingWeapon;
 var bool bUseLC; //Mirror: bCarriedItem
 var bool bSimAmmo;
@@ -37,6 +41,16 @@ var bool bJustSwitched;
 var bool bHitProcDone; //One proc per Tick
 var bool bSWChecked;
 var bool bNoBinds;
+
+// Copy replacement status
+var bool bReplaceImpactHammer;
+var bool bReplaceEnforcer;
+var bool bReplacePulseGun;
+var bool bReplaceShockRifle;
+var bool bReplaceMinigun;
+var bool bReplaceSniperRifle;
+var bool bReplaceInsta;
+var bool bReplaceSiegePulseRifle;
 
 var XC_ClientSettings ClientSettings;
 
@@ -74,7 +88,7 @@ replication
 	reliable if ( bNetInitial && Role == ROLE_Authority ) //Useful when XC_GameEngine or UTPure is running
 		bNoBinds;
 	reliable if ( Role == ROLE_Authority )
-		bUseLC, bSimAmmo, cAdv, ProjAdv, bSWChecked, ClientPredictCap;
+		bUseLC, bSimAmmo, cAdv, ProjAdv, bSWChecked, ClientPredictCap,bReplaceImpactHammer, bReplaceEnforcer, bReplacePulseGun, bReplaceShockRifle, bReplaceMinigun, bReplaceSniperRifle, bReplaceInsta, bReplaceSiegePulseRifle, bDebug;
 	reliable if ( Role == ROLE_Authority )
 		ForceLC, ClientSetPendingWeapon, ClientSetFireOffsetY, ReceiveSWJumpPad, LockSWJumpPads, 
 		ClientChangeLC, ClientChangePCap, ClientChangeHiFi;
@@ -421,7 +435,20 @@ simulated state ClientOp
 		ProcessHiFi( DeltaTime);
 	}
 Begin:
-	Spawn(class'LCBindScanner').bNoBinds = bNoBinds;
+	BS = Spawn(class'LCBindScanner');
+	if (BS != None)
+	{
+		BS.bNoBinds = bNoBinds;
+		BS.bDebug = bDebug;
+		BS.bReplaceImpactHammer = bReplaceImpactHammer;
+		BS.bReplaceEnforcer = bReplaceEnforcer;
+		BS.bReplacePulseGun = bReplacePulseGun;
+		BS.bReplaceShockRifle = bReplaceShockRifle;
+		BS.bReplaceMinigun = bReplaceMinigun;
+		BS.bReplaceSniperRifle = bReplaceSniperRifle;
+		BS.bReplaceInsta = bReplaceInsta;
+		BS.bReplaceSiegePulseRifle = bReplaceSiegePulseRifle;
+	}
 	Sleep( 1); //Just in case
 	if ( LocalPlayer.IsA('bbPlayer') )
 		Sleep(2.5); //UTPure is about to fuck up my hud, let's wait a bit

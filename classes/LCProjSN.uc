@@ -4,7 +4,6 @@
 class LCProjSN expands SpawnNotify;
 
 var XC_LagCompensation Mutator;
-var bool bReplaceRockets;
 
 event Actor SpawnNotification( Actor A)
 {
@@ -42,7 +41,6 @@ function LCRocketMk2 ReplaceRocket( RocketMk2 R)
 defaultproperties
 {
       Mutator=None
-      bReplaceRockets=True
       ActorClass=Class'Engine.Projectile'
       RemoteRole=ROLE_None
 }

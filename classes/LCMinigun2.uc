@@ -31,7 +31,7 @@ var vector LastStartTrace;
 replication
 {
 	reliable if ( bNetOwner && Role == ROLE_Authority )
-		SlowSleep, FastSleep;
+		SlowSleep, FastSleep, bNoLockdown;
 }
 
 
@@ -132,8 +132,6 @@ simulated function ProcessTraceHit( Actor Other, Vector HitLocation, Vector HitN
 			X = vect(0,0,0);
 		else if ( FRand() < 0.2 )
 			X *= 2.5;
-		else if ( (Pawn(Other) != None) && Pawn(Other).bIsPlayer && bNoLockdown)
-			X = vect(0,0,0); //Lockdown prevention on players - CB style
 		Other.TakeDamage( rndDam, Pawn(Owner), HitLocation, rndDam*500.0*X, MyDamageType);
 	}
 	if ( LCChan != None )
@@ -324,9 +322,14 @@ FastShoot:
 
 simulated function bool NoMomentum()
 {
+	local bool bGameNoLockdown;
 	if ( Level.Game != None )
-		return Level.Game.GetPropertyText("NoLockdown") == "1";
-	return false;
+	{
+		bGameNoLockdown = Level.Game.GetPropertyText("NoLockdown") == "1";
+		return bNoLockdown || bGameNoLockdown;
+	}
+
+	return bNoLockdown || false;
 }
 
 //***********************************************************************

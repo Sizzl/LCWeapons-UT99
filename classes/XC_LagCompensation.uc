@@ -31,17 +31,27 @@ var bool bNeedsHiddenEffects;
 
 var(Debug) float PingMult, PingAdd;
 var Pawn LinkedPawn;
-
+var() config bool bDebug;
 var() config bool bKickers; //Requires restart
 var() config bool bSWJumpPads;
 var() config bool bWeaponAnim;
 var() config bool bSimulateAmmo;
 var() config bool bUsePrediction;
 var() config bool bEnableMHhack;
+
 var() config bool bReplaceRockets;
+var() config bool bReplaceImpactHammer;
+var() config bool bReplaceEnforcer;
+var() config bool bReplacePulseGun;
+var() config bool bReplaceShockRifle;
+var() config bool bReplaceMinigun;
+var() config bool bReplaceSniperRifle;
+var() config bool bReplaceInsta;
+var() config bool bReplaceSiegePulseRifle;
+
 var() config bool bTIWFire;
 var() config float MaxPredictNonLC;
-
+var() config int PredictMode;
 var Teleporter swPads[63];
 
 // Time Stamp counter for positions
@@ -125,14 +135,14 @@ function Mutate (string MutateString, PlayerPawn Sender)
 		if ( MutateString ~= "GetPrediction")
 		{
 			PPredict = -1;
-			Sender.ClientMessage("The server is using a"@int(MaxPredictNonLC)@"MS prediction cap");
+			Sender.ClientMessage("The server is using a"@int(MaxPredictNonLC)@"ms prediction cap, mode:"@LCComp.Mode$", debugging enabled:"@LCComp.bDebug);
 			LCComp = ffFindCompFor(Sender);
 			if ( LCComp != none && LCComp.CompChannel != none )
 				PPredict = LCComp.CompChannel.ClientPredictCap;
 			if ( PPredict == 0 )
 				Sender.ClientMessage( "Your client is overriding prediction: 0 = DISABLED");
 			else if ( PPredict > 0 )
-				Sender.ClientMessage( "Your client is overriding prediction cap: "$PPredict$" MS");
+				Sender.ClientMessage( "Your client is overriding prediction cap: "$PPredict$"ms");
 		}
 		else if ( Left(MutateString, 11) ~= "Prediction " )
 		{
@@ -140,14 +150,39 @@ function Mutate (string MutateString, PlayerPawn Sender)
 			Param = Mid( MutateString, 11);
 			if ( LCComp != none && LCComp.CompChannel != none )
 			{
-				if ( Param ~= "default" )
+				if ( Param ~= "default" || Param ~= "enable" )
 					LCComp.CompChannel.ChangePCap( -1);
 				else if ( Param ~= "disable" )
 					LCComp.CompChannel.ChangePCap( 0);
 				else
 					LCComp.CompChannel.ChangePCap( int(Param) );
-				Sender.ClientMessage( "New Prediction cap value: "$LCComp.CompChannel.ClientPredictCap );
+				Sender.ClientMessage( "New Prediction cap value: "$LCComp.CompChannel.ClientPredictCap$", mode:"@LCComp.Mode$", debugging enabled:"@LCComp.bDebug );
 			}	
+		}
+		else if ( Sender.bAdmin && Left(MutateString, 6) ~= "pmode " )
+		{
+			Param = Mid( MutateString, 6);
+			LCComp = ffFindCompFor(Sender);
+			PredictMode = int(Param);
+			if (PredictMode==1)
+				Sender.ClientMessage( "Global prediction mode is now set to less frequent sampling.");
+			else if (PredictMode==2)
+				Sender.ClientMessage( "Global prediction mode is now set to less frequent and next-neighbour sampling.");
+			else if (PredictMode==3)
+				Sender.ClientMessage( "Global prediction mode is now set to smoothed averaging.");
+			else
+			{
+				PredictMode = 0;
+				Sender.ClientMessage( "Global prediction mode is now set to smoothed averaging.");
+			}
+
+
+			SaveConfig();
+			if ( LCComp != none && LCComp.CompChannel != none )
+			{
+				LCComp.Mode = PredictMode;
+			}
+
 		}
 		else if ( Left(MutateString, 10) ~= "Prediction" )
 		{
@@ -220,6 +255,8 @@ function bool ffInsertNewPlayer( Pawn NewPlayer)
 	if ( NewPlayer == none )
 		return false;
 	ffTmp = Spawn( class'XC_LagCompensator', NewPlayer);
+	ffTmp.bDebug = bDebug;
+	ffTmp.Mode = PredictMode;
 	ffTmp.ffOwner = NewPlayer;
 	ffTmp.ffCompNext = ffCompList;
 	ffCompList = ffTmp;
@@ -232,6 +269,18 @@ function bool ffInsertNewPlayer( Pawn NewPlayer)
 		ffTmp.CompChannel = Spawn(class'XC_CompensatorChannel');
 		ffTmp.CompChannel.bNoBinds = bNoBinds;
 		ffTmp.CompChannel.bSimAmmo = bSimulateAmmo;
+		
+		ffTmp.CompChannel.bDebug = bDebug;
+
+		ffTmp.CompChannel.bReplaceImpactHammer = bReplaceImpactHammer;
+		ffTmp.CompChannel.bReplaceEnforcer = bReplaceEnforcer;
+		ffTmp.CompChannel.bReplacePulseGun = bReplacePulseGun;
+		ffTmp.CompChannel.bReplaceShockRifle = bReplaceShockRifle;
+		ffTmp.CompChannel.bReplaceMinigun = bReplaceMinigun;
+		ffTmp.CompChannel.bReplaceSniperRifle = bReplaceSniperRifle;
+		ffTmp.CompChannel.bReplaceInsta = bReplaceInsta;
+		ffTmp.CompChannel.bReplaceSiegePulseRifle = bReplaceSiegePulseRifle;
+
 		ffTmp.CompChannel.AddPlayer( PlayerPawn(NewPlayer), self);
 	}
 }
@@ -400,6 +449,7 @@ function XC_PosList SetupPosList( Actor Other)
 
 defaultproperties
 {
+	  PredictMode=3
       ffCompList=None
       iCombo=0
       ffMaxLatency=650.000000
@@ -419,7 +469,7 @@ defaultproperties
       bUsePrediction=True
       bEnableMHhack=True
       bReplaceRockets=True
-      bTIWFire=False
+      bTIWFire=True
       MaxPredictNonLC=150.000000
       swPads(0)=None
       swPads(1)=None

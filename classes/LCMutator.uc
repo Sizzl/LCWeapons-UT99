@@ -5,12 +5,13 @@ var Weapon ReplaceThis, ReplaceThisWith;
 var LCSpawnNotify ReplaceSN;
 var() bool bApplySNReplace;
 var() bool bTeamShock;
+var() bool bNoLockdownGame;
 var() string LoadedClasses;
 var() config bool bUseRifleHeadshotAdjustment;
-var() config bool bDebug;
+
 var() config float PowerAdjustMiniPri;
 var() config float PowerAdjustMiniSec;
-var() config float PowerAdjustPulseGunPri;
+//var() config float PowerAdjustPulseGunPri; // Perhaps when Pulse is true LC, this can be performed
 var() config float PowerAdjustPulseGunSec;
 
 var() config bool bNoLockdownAll; // All overrides individual values if True
@@ -18,16 +19,6 @@ var() config bool bNoLockdownMini;
 var() config bool bNoLockdownPulseGun;
 //var() config bool bNoLockdownEnforcer;
 //var() config bool bNoLockdownSniper;
-
-var() config bool bReplaceImpactHammer;
-var() config bool bReplaceEnforcer;
-var() config bool bReplacePulseGun;
-var() config bool bReplaceShockRifle;
-var() config bool bReplaceMinigun;
-var() config bool bReplaceSniperRifle;
-var() config bool bReplaceInsta;
-var() config bool bReplaceSiegePulseRifle;
-
 
 //Find known custom arenas, replace with LC arenas
 event PreBeginPlay()
@@ -54,7 +45,11 @@ event PreBeginPlay()
 		else
 			old = M;
 	}
-	log("Started PBP",'LCWeapons');
+	if (bDebug)
+		log("Started PBP",'LCWeapons');
+	
+	bNoLockdownGame = Level.Game.GetPropertyText("NoLockdown") == 1; // Check v469 Lockdown
+
 	Level.Game.RegisterMessageMutator(self);
 }
 
@@ -444,27 +439,25 @@ function bool ChainMutatorBeforeThis( Mutator M)
 function Mutate (string MutateString, PlayerPawn Sender)
 {
 	local string item;
-	if (bDebug)
-	{
-		log("LC Caught Mutate: "$MutateString,'LCWeapons');
-	}
 	if ( !bNoBinds && Left(MutateString, 10) ~= "getweapon " )
 	{
-		if ( (MutateString ~= "getweapon zp_SniperRifle") || (MutateString ~= "getweapon zp_sn") )
+		// Enact a weapon change for older clients, but only if LC has replaced it in the first place
+
+		if ( ((MutateString ~= "getweapon zp_SniperRifle") || (MutateString ~= "getweapon zp_sn")) && bReplaceSniperRifle )
 			Class'LCStatics'.static.FindBasedWeapon( Sender, class'LCSniperRifle');
-		else if ( (MutateString ~= "getweapon zp_ShockRifle") || (MutateString ~= "getweapon zp_sh") )
+		else if ( (MutateString ~= "getweapon zp_ShockRifle") || (MutateString ~= "getweapon zp_sh")  && bReplaceShockRifle)
 			Class'LCStatics'.static.FindBasedWeapon( Sender, class'LCShockRifle');
-		else if ( (MutateString ~= "getweapon zp_Enforcer") || (MutateString ~= "getweapon zp_e") )
+		else if ( (MutateString ~= "getweapon zp_Enforcer") || (MutateString ~= "getweapon zp_e") && bReplaceEnforcer)
 			Class'LCStatics'.static.FindBasedWeapon( Sender, class'LCEnforcer');
-		else if ( (MutateString ~= "getweapon lc_apr") )
+		else if ( (MutateString ~= "getweapon lc_apr") && bReplaceSiegePulseRifle)
 			Class'LCStatics'.static.FindBasedWeapon( Sender, class'LCAsmdPulseRifle');
-		else if ( (MutateString ~= "getweapon lc_sir") )
+		else if ( (MutateString ~= "getweapon lc_sir") && bReplaceSiegePulseRifle)
 			Class'LCStatics'.static.FindBasedWeapon( Sender, class'LCSiegeInstagibRifle');
-		else if ( (MutateString ~= "getweapon lc_m") )
+		else if ( (MutateString ~= "getweapon lc_m") && bReplaceMinigun	)
 			Class'LCStatics'.static.FindBasedWeapon( Sender, class'LCMinigun2');
-		else if ( (MutateString ~= "getweapon lc_pg") )
+		else if ( (MutateString ~= "getweapon lc_pg") && bReplacePulseGun	)
 			Class'LCStatics'.static.FindBasedWeapon( Sender, class'LCPulseGun');
-		else if ( (MutateString ~= "getweapon lc_ih") )
+		else if ( (MutateString ~= "getweapon lc_ih") && bReplaceImpactHammer )
 			Class'LCStatics'.static.FindBasedWeapon( Sender, class'LCImpactHammer');
 	}
 	else if ( MutateString ~= "lc" || MutateString ~= "lcweapons" || MutateString ~= "replacements" )
@@ -474,12 +467,13 @@ function Mutate (string MutateString, PlayerPawn Sender)
 		Sender.ClientMessage("Impact Hammer:"@string(bReplaceImpactHammer));
 		// Sender.ClientMessage("Enforcer:"@string(bReplaceEnforcer)$", Lockdown enabled:"@(bNoLockdownAll || bNoLockdownEnforcer));
 		Sender.ClientMessage("Enforcer:"@string(bReplaceEnforcer));
-		Sender.ClientMessage("Pulse Gun:"@string(bReplacePulseGun)$", Lockdown enabled:"@(bNoLockdownAll || bNoLockdownPulseGun));
+		Sender.ClientMessage("Pulse Gun:"@string(bReplacePulseGun)$", Lockdown enabled:"@(bNoLockdownAll || bNoLockdownPulseGun || bNoLockdownGame));
 		Sender.ClientMessage("Shock Rifle:"@string(bReplaceShockRifle));
-		Sender.ClientMessage("Minigun:"@string(bReplaceMinigun)$", Lockdown enabled:"@(bNoLockdownAll || bNoLockdownMini));
+		Sender.ClientMessage("Minigun:"@string(bReplaceMinigun)$", Lockdown enabled:"@(bNoLockdownAll || bNoLockdownMini || bNoLockdownGame));
 		//Sender.ClientMessage("Sniper Rifle:"@string(bReplaceSniperRifle)$", Lockdown enabled:"@(bNoLockdownAll || bNoLockdownSniper));
 		Sender.ClientMessage("Sniper Rifle:"@string(bReplaceSniperRifle));
 		Sender.ClientMessage("Super Shock Rifle (InstaGib):"@string(bReplaceInsta));
+		Sender.ClientMessage("Rocket Projectiles:"@string(bReplaceRockets));
 	}
 	else if (Left(MutateString,6) ~= "lc set")
 	{
@@ -633,8 +627,7 @@ defaultproperties
       bDebug=True
       PowerAdjustMiniPri=1.000000
       PowerAdjustMiniSec=1.000000
-      PowerAdjustPulseGunPri=0.000000
-      PowerAdjustPulseGunSec=0.000000
+      PowerAdjustPulseGunSec=1.000000
       bNoLockdownAll=True
       bNoLockdownMini=True
       bNoLockdownPulseGun=True

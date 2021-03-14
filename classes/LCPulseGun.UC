@@ -14,7 +14,7 @@ var() float SlowSleep; // Uses this if !bTIW
 var() float FastSleep; // Uses this if !bTIW
 var() float SlowTIW; //Copies value to SlowSleep if bTIW
 var() float FastTIW; //Copies value to FastSleep if bTIW
-var() float PowerFactorPri; // Adjusted in Mutator
+//var() float PowerFactorPri; // Adjusted in Mutator
 var() float PowerFactorSec; // Adjusted in Mutator
 var() float SlowAccuracy;
 var() float FastAccuracy;
@@ -43,10 +43,16 @@ simulated event KillCredit( actor Other)
 	{
 		bDebug = LCMutator(Other).bDebug;
 		bTIW = LCMutator(Other).bTIWFire;
+		//PowerFactorPri = LCMutator(Other).PowerAdjustPulseGunPri; // To-do
+		PowerFactorSec = LCMutator(Other).PowerAdjustPulseGunSec;
+
 		class'LCPulseGunBolt'.Default.bNoLockdown = LCMutator(Other).bNoLockdownAll || LCMutator(Other).bNoLockdownPulseGun;
 		class'LCPulseGunStarterBolt'.Default.bNoLockdown = LCMutator(Other).bNoLockdownAll || LCMutator(Other).bNoLockdownPulseGun;
-		PowerFactorPri = LCMutator(Other).PowerAdjustPulseGunPri;
-		PowerFactorSec = LCMutator(Other).PowerAdjustPulseGunSec;
+		class'LCPulseGunBolt'.default.PowerAdjust = PowerFactorSec;
+		if (bDebug)
+			log("[LC] Adjusting Pulse Gun bolt power value by a factor of:"@PowerFactorSec,'LCWeapons');
+		/*
+		// TIW Toggle to-do (unsure if this is actually something people would want to turn off)
 		if (bTIW)
 		{
 			if (bDebug)
@@ -62,6 +68,7 @@ simulated event KillCredit( actor Other)
 			FastSleep = FastSleep * PowerFactorSec;			
 
 		}
+		*/
 	}
 }
 simulated function PlayPostSelect()

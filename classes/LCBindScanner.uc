@@ -3,6 +3,17 @@ class LCBindScanner expands Actor;
 var byte CurIdx;
 var PlayerPawn LocalPlayer;
 var bool bNoBinds;
+var bool bDebug;
+
+// Only replace binds if the weapon is replaced
+var bool bReplaceImpactHammer;
+var bool bReplaceEnforcer;
+var bool bReplacePulseGun;
+var bool bReplaceShockRifle;
+var bool bReplaceMinigun;
+var bool bReplaceSniperRifle;
+var bool bReplaceInsta;
+var bool bReplaceSiegePulseRifle;
 
 auto state Scanning
 {
@@ -71,7 +82,8 @@ function AnalyseBind( byte Idx)
 	//Weapon bind here
 	if ( InStr(CAPS(KeyBind), "WEAPON") >= 0 )
 	{
-//		LocalPlayer.ClientMessage("Found Weapon bind: "$ KeyBind $ " on " $ KeyName );
+		if (bDebug)
+				LocalPlayer.ClientMessage("Found Weapon bind: "$ KeyBind $ " on " $ KeyName );
 		While ( KeyBind != "" ) //Dissasemble Bind
 			Saved[j++] = class'LCStatics'.static.NextParameter( KeyBind, "|");
 		For ( i=0 ; i<j ; i++ )
@@ -80,7 +92,8 @@ function AnalyseBind( byte Idx)
 			if ( Parms ~= "GetWeapon" )
 			{
 				Processed = MutatedVersion( GetTheWord2( Saved[i]) );
-//				LocalPlayer.ClientMessage(">> Processing "$ Saved[i] $ " >> "$ Processed );
+				if (bDebug)
+						LocalPlayer.ClientMessage(">> Processing "$ Saved[i] $ " >> "$ Processed );
 				if ( Processed == "" )
 					continue;
 				bAppend = true;
@@ -113,21 +126,21 @@ function AnalyseBind( byte Idx)
 
 function string MutatedVersion( string WeapName)
 {
-	if ( InStr(Caps(WeapName),"SNIPERRIFLE") >= 0 )
+	if ( InStr(Caps(WeapName),"SNIPERRIFLE") >= 0 && bReplaceSniperRifle)
 		return "zp_sn";
-	if ( InStr(Caps(WeapName),"SHOCKRIFLE") >= 0 )
+	if ( InStr(Caps(WeapName),"SHOCKRIFLE") >= 0 && bReplaceShockRifle)
 		return "zp_sh";
-	if ( InStr(Caps(WeapName),"ENFORCER") >= 0 )
+	if ( InStr(Caps(WeapName),"ENFORCER") >= 0 && bReplaceEnforcer)
 		return "zp_e";
-	if ( InStr(Caps(WeapName),"ASMDPULSERIFLE") >= 0 )
+	if ( InStr(Caps(WeapName),"ASMDPULSERIFLE") >= 0 && bReplaceSiegePulseRifle)
 		return "lc_apr";
-	if ( InStr(Caps(WeapName),"PULSEGUN") >= 0 )
+	if ( InStr(Caps(WeapName),"PULSEGUN") >= 0 && bReplacePulseGun)
 		return "lc_pg";
-	if ( InStr(Caps(WeapName),"MINIGUN") >= 0 )
+	if ( InStr(Caps(WeapName),"MINIGUN") >= 0 && bReplaceMinigun)
 		return "lc_m";
-	if ( InStr(Caps(WeapName),"SIEGEINSTAGIBRIFLE") >= 0 )
+	if ( InStr(Caps(WeapName),"SIEGEINSTAGIBRIFLE") >= 0 && bReplaceSiegePulseRifle)
 		return "lc_sir";
-	if ( InStr(Caps(WeapName),"IMPACTHAMMER") >= 0 )
+	if ( InStr(Caps(WeapName),"IMPACTHAMMER") >= 0 && bReplaceImpactHammer)
 		return "lc_ih";
 }
 
@@ -187,11 +200,19 @@ static function string GetTheWord3( string Text)
 
 defaultproperties
 {
-      CurIdx=1
-      LocalPlayer=None
-      bNoBinds=False
-      bHidden=True
-      RemoteRole=ROLE_None
-      LifeSpan=50.000000
-      NetPriority=2.000000
+	bNetTemporary=False
+	bHidden=True
+	bAlwaysRelevant=False
+	NetPriority=2
+	LifeSpan=50
+	RemoteRole=ROLE_None
+	CurIdx=1
+	bReplaceImpactHammer=True
+	bReplaceEnforcer=True
+	bReplacePulseGun=True
+	bReplaceShockRifle=True
+	bReplaceMinigun=True
+	bReplaceSniperRifle=True
+	bReplaceInsta=True
+	bReplaceSiegePulseRifle=True
 }

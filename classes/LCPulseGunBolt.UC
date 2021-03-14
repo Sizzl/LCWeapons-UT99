@@ -7,6 +7,7 @@ class LCPulseGunBolt extends PBolt;
 // Properties.
 //-----------------------------------------------------------------------------
 var() bool bNoLockdown;
+var() float PowerAdjust;
 var float nextboltTime;
 
 //-----------------------------------------------------------------------------
@@ -25,12 +26,12 @@ simulated function CheckBeam( vector X, float DeltaTime )
 		if ( Level.NetMode!=NM_Client )
 		{
 			HitCorrected = X;
-			if ( (Pawn(HitActor) != None) && Pawn(HitActor).bIsPlayer && bNoLockdown)
+			if ( (Pawn(HitActor) != None) && Pawn(HitActor).bIsPlayer && NoMomentum())
 				HitCorrected = vect(0,0,0); //Lockdown prevention on players - CB style
 
 			if ( DamagedActor==None )
 			{
-				AccumulatedDamage = FMin( 0.5*(Level.TimeSeconds-LastHitTime), 0.1 );
+				AccumulatedDamage = FMin( 0.5*(Level.TimeSeconds-LastHitTime), 0.08*PowerAdjust ); // Stock is 0.1, reduced to 0.08 to align with PureStat weapons; can be adjusted through mutator.
 				HitActor.TakeDamage( int(Damage*AccumulatedDamage), Instigator, HitLocation, float(MomentumTransfer)*HitCorrected*AccumulatedDamage, MyDamageType );
 				AccumulatedDamage = 0.0;
 			}
@@ -61,16 +62,16 @@ simulated function CheckBeam( vector X, float DeltaTime )
 		}
 		else if ( WallEffect==None || WallEffect.bDeleteMe )
 		{
-			WallEffect = Spawn( Class'PlasmaHit', , , HitLocation-float(5)*X );
+			WallEffect = Spawn( Class'PlasmaHit', , , HitLocation - float(5) * X );
 		}
 		else if ( !WallEffect.IsA('PlasmaHit') )
 		{
 			WallEffect.Destroy();
-			WallEffect = Spawn( Class'PlasmaHit', , , HitLocation-float(5)*X );
+			WallEffect = Spawn( Class'PlasmaHit', , , HitLocation - float(5) * X );
 		}
 		else
 		{
-			WallEffect.SetLocation( HitLocation-float(5)*X );
+			WallEffect.SetLocation( HitLocation - float(5)*X );
 		}
 		if ( WallEffect!=None && Level.NetMode!=NM_DedicatedServer )
 		{
@@ -87,7 +88,7 @@ simulated function CheckBeam( vector X, float DeltaTime )
 	else if ( Level.NetMode!=NM_Client && DamagedActor!=None )
 	{
 		HitCorrected = X;
-		if ( (Pawn(HitActor) != None) && Pawn(HitActor).bIsPlayer && bNoLockdown)
+		if ( (Pawn(HitActor) != None) && Pawn(HitActor).bIsPlayer && NoMomentum())
 			HitCorrected = vect(0,0,0); //Lockdown prevention on players - CB style
 		DamagedActor.TakeDamage( int(Damage*AccumulatedDamage), Instigator, DamagedActor.Location-HitCorrected*1.2*DamagedActor.CollisionRadius, float(MomentumTransfer)*X*AccumulatedDamage, MyDamageType );
 		AccumulatedDamage = 0.0;
@@ -98,16 +99,16 @@ simulated function CheckBeam( vector X, float DeltaTime )
 	{
 		if ( WallEffect==None || WallEffect.bDeleteMe )
 		{
-			WallEffect = Spawn( Class'PlasmaCap', , , Location+(BeamSize-float(4))*X );
+			WallEffect = Spawn( Class'PlasmaCap', , , Location+(BeamSize - float(4)) * X );
 		}
 		else if ( WallEffect.IsA('PlasmaHit') )
 		{
 			WallEffect.Destroy();
-			WallEffect = Spawn( Class'PlasmaCap', , , Location+(BeamSize-float(4))*X );
+			WallEffect = Spawn( Class'PlasmaCap', , , Location+(BeamSize - float(4)) * X );
 		}
 		else
 		{
-			WallEffect.SetLocation( Location+(BeamSize-float(4))*X );
+			WallEffect.SetLocation( Location + (BeamSize - float(4)) * X );
 		}
 	}
 	else
@@ -130,6 +131,19 @@ simulated function CheckBeam( vector X, float DeltaTime )
 	}
 }
 
+
+simulated function bool NoMomentum()
+{
+	local bool bGameNoLockdown;
+	if ( Level.Game != None )
+	{
+		bGameNoLockdown = Level.Game.GetPropertyText("NoLockdown") == "1";
+		return bNoLockdown || bGameNoLockdown;	
+	}
+	return bNoLockdown || false;
+}
+
+
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
@@ -137,4 +151,5 @@ defaultproperties
 {
       bNoLockdown=False
       nextboltTime=0.000000
+      PowerAdjust=1.0
 }
