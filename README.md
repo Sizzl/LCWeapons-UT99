@@ -14,10 +14,6 @@ Recommended:
    - For building this from source, utilise headers at [Sizzl/LeagueAS140](https://github.com/Sizzl/LeagueAS140) to compile.
    - For general client and server usage, simply download the compiled LeagueAS files from [utassault.net](https://www.utassault.net/leagueas/files/LeagueAS140.zip)
 
-Start-up:
- - Add "ESP140.ESP" to your mutator startup line, MapVote or DynamicPackageLoader configuration.
-   - e.g. AS-Submarinebase][?game=LeagueAS140.LeagueAssault?mutator=ESP140.ESP
-
 Additional commands:
 
  - `mutate lc` -- provides information on the current replaced weapons and any further settings applied
