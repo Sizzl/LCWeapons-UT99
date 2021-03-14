@@ -465,12 +465,12 @@ function Mutate (string MutateString, PlayerPawn Sender)
 		Sender.ClientMessage("LCWeapons replacement mutator. Weapons/variants being replaced:");
 		Sender.ClientMessage("---");
 		Sender.ClientMessage("Impact Hammer:"@string(bReplaceImpactHammer));
-		// Sender.ClientMessage("Enforcer:"@string(bReplaceEnforcer)$", Lockdown enabled:"@(bNoLockdownAll || bNoLockdownEnforcer));
+		// Sender.ClientMessage("Enforcer:"@string(bReplaceEnforcer)$", NoLockdown enabled:"@(bNoLockdownAll || bNoLockdownEnforcer || bNoLockdownGame));
 		Sender.ClientMessage("Enforcer:"@string(bReplaceEnforcer));
-		Sender.ClientMessage("Pulse Gun:"@string(bReplacePulseGun)$", Lockdown enabled:"@(bNoLockdownAll || bNoLockdownPulseGun || bNoLockdownGame));
+		Sender.ClientMessage("Pulse Gun:"@string(bReplacePulseGun)$", NoLockdown enabled:"@(bNoLockdownAll || bNoLockdownPulseGun || bNoLockdownGame));
 		Sender.ClientMessage("Shock Rifle:"@string(bReplaceShockRifle));
-		Sender.ClientMessage("Minigun:"@string(bReplaceMinigun)$", Lockdown enabled:"@(bNoLockdownAll || bNoLockdownMini || bNoLockdownGame));
-		//Sender.ClientMessage("Sniper Rifle:"@string(bReplaceSniperRifle)$", Lockdown enabled:"@(bNoLockdownAll || bNoLockdownSniper));
+		Sender.ClientMessage("Minigun:"@string(bReplaceMinigun)$", NoLockdown enabled:"@(bNoLockdownAll || bNoLockdownMini || bNoLockdownGame));
+		//Sender.ClientMessage("Sniper Rifle:"@string(bReplaceSniperRifle)$", NoLockdown enabled:"@(bNoLockdownAll || bNoLockdownSniper || bNoLockdownGame));
 		Sender.ClientMessage("Sniper Rifle:"@string(bReplaceSniperRifle));
 		Sender.ClientMessage("Super Shock Rifle (InstaGib):"@string(bReplaceInsta));
 		Sender.ClientMessage("Rocket Projectiles:"@string(bReplaceRockets));
